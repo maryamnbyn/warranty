@@ -16,9 +16,10 @@ use Illuminate\Http\Request;
 //product route
 
 Route::group(['namespace' => 'API\V1', 'prefix' => 'v1'], function () {
-    Route::resource('/products', 'ProductController');
     Route::post('/register', 'UserController@register');
     Route::post('/login', 'UserController@login');
     Route::post('/verification', 'UserController@verification');
+    Route::post('/user/{user}', 'UserController@update');
+    Route::post('/sendsms', 'UserController@sendSMS');
 });
 
