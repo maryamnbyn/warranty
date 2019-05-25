@@ -16,7 +16,9 @@ class CreateFirebasesTable extends Migration
         Schema::create('firebases', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id');
-            $table->string('token');
+            $table->string('device')->nullable();
+            $table->integer('code')->nullable();
+            $table->text('token')->nullable();
             $table->timestamps();
         });
     }

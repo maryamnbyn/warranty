@@ -17,7 +17,6 @@ class CreateUsersTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->integer('phone')->unique();
-            $table->integer('code')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
