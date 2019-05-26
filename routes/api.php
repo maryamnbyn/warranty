@@ -17,14 +17,16 @@ use Illuminate\Http\Request;
 
 Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ,'middleware' => 'auth:api'], function () {
 
-    Route::post('/verification', 'UserController@verification');
     Route::post('/user/edit', 'UserController@update');
-    Route::post('/sendsms', 'UserController@sendSMS');
+    Route::post('/verification/update', 'UserController@verificationUpdate');
+
 });
 //login and register route
 
 Route::group(['namespace' => 'API\V1', 'prefix' => 'v1'], function () {
+    Route::post('/verification/register', 'UserController@verification');
     Route::post('/register', 'UserController@register');
     Route::post('/login', 'UserController@login');
+
 });
 
