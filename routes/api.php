@@ -15,18 +15,15 @@ use Illuminate\Http\Request;
 
 //product route
 
-Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ,'middleware' => 'auth:api'], function () {
+Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ], function () {
 
     Route::post('/user/edit', 'UserController@update');
-    Route::post('/verification/update', 'UserController@verificationUpdate');
-
-});
-//login and register route
-
-Route::group(['namespace' => 'API\V1', 'prefix' => 'v1'], function () {
-    Route::post('/verification/register', 'UserController@verification');
+    Route::post('/update/verify', 'UserController@verificationUpdate');
+    Route::post('/register/verify', 'UserController@verification');
     Route::post('/register', 'UserController@register');
     Route::post('/login', 'UserController@login');
+    Route::post('/logout', 'UserController@logout');
 
 });
+
 
