@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Events\SMSCreated;
 use App\User;
+use Kavenegar\KavenegarApi;
+use phpDocumentor\Reflection\DocBlock\Tags\Return_;
 use Validator;
 use App\Firebase;
 use http\Env\Response;
@@ -77,7 +80,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'regex:/^[a-zA-Z]+$/u|max:12',
             'phone' => 'unique:users|max:11',
-            'device' => 'unique:firebases|required',
+            'device' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -104,8 +107,10 @@ class UserController extends Controller
         Firebase::create([
             'user_id' => $user_id,
             'device' => $device,
-            'code' => 4444
         ]);
+
+        event(new SMSCreated($user_id,$device));
+
 
         return response()->json([
             'code' => $this->successStatus,
