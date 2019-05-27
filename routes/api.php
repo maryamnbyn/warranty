@@ -13,17 +13,23 @@ use Illuminate\Http\Request;
 |
 */
 
-//product route
+//token
 
-Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ], function () {
+Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ,'middleware' => 'auth:api'], function () {
 
     Route::post('/user/edit', 'UserController@update');
     Route::post('/update/verify', 'UserController@verificationUpdate');
-    Route::post('/register/verify', 'UserController@verification');
-    Route::post('/register', 'UserController@register');
-    Route::post('/login', 'UserController@login');
     Route::post('/logout', 'UserController@logout');
 
-});
 
+});
+//login and register route
+
+Route::group(['namespace' => 'API\V1', 'prefix' => 'v1'], function () {
+
+    Route::post('/register/verify', 'UserController@verificationRegister');
+    Route::post('/register', 'UserController@register');
+    Route::post('/login', 'UserController@login');
+
+});
 

@@ -21,7 +21,8 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'phone' => 'required'
+            'phone' => 'required',
+            'device' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -38,18 +39,19 @@ class UserController extends Controller
         $device = $request->device;
         $user = User::where('phone', $phone)->first();
 
-        if (!empty($user)) {
+        if(!empty($user)){
+
             $user_id = $user->id;
             $check_device = Firebase::where('user_id', $user_id)->where('device', $device)->first();
 
             if (!empty($check_device)) {
                 $check_device->update([
-                    'code' => 8888
+                    'code' => 2222
                 ]);
 
                 return response()->json([
                     'code' => $this->successStatus,
-                    'message' => 'کاربر وجود داشته و کد جدید برایش ارسال شد!',
+                    'message' => 'کاربر از قبل وجود داشته و کد جدید برایش ارسال شد!',
                 ]);
             } else {
                 Firebase::create([
@@ -63,21 +65,19 @@ class UserController extends Controller
                     'message' => 'کاربر با این وسیله ثبت و کد ارسال شد!',
                 ]);
             }
-
-        } else {
-
-            return Response()->json([
-                'code' => $this->failedStatus,
-                'message' => 'کاربری با این شماره وجود نداشته و خطای عدم دسترسی',
-            ]);
         }
+        return Response()->json([
+            'code' => $this->failedStatus,
+            'message' => 'کاربر با این شماره وجود نداشته است!',
+        ]);
     }
 
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'regex:/^[a-zA-Z]+$/u|max:12',
-            'phone' => 'max:11',
+            'phone' => 'unique:users|max:11',
+            'device' => 'unique:firebases|required',
         ]);
 
         if ($validator->fails()) {
@@ -94,41 +94,32 @@ class UserController extends Controller
         $phone = $request->phone;
         $device = $request->device;
 
-        $user = User::where('phone', $phone)->first();
+        $user = User::create([
+            'name' => $name,
+            'phone' => $phone,
+        ]);
 
-        if (empty($user)) {
+        $user_id = $user->id;
 
-            $user = User::create([
-                'name' => $name,
-                'phone' => $phone,
-            ]);
+        Firebase::create([
+            'user_id' => $user_id,
+            'device' => $device,
+            'code' => 4444
+        ]);
 
-            $user_id = $user->id;
+        return response()->json([
+            'code' => $this->successStatus,
+            'message' => 'کاربر جدید بوده و کد برایش ارسال شد!',
+        ]);
 
-            Firebase::create([
-                'user_id' => $user_id,
-                'device' => $device,
-                'code' => 4444
-            ]);
-
-            return response()->json([
-                'code' => $this->successStatus,
-                'message' => 'کاربر جدید بوده و کد برایش ارسال شد!',
-            ]);
-
-        } else {
-            return response()->json([
-                'code' => $this->failedStatus,
-                'message' => 'کاربر جدید نیست و باید لاگین کند!',
-            ]);
-        }
     }
 
-    public function verification(Request $request)
+    public function verificationRegister(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'code' => 'required|min:4',
-
+            'device' => 'required',
+            'phone' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -147,34 +138,39 @@ class UserController extends Controller
 
         $user = User::where('phone', $phone)->first();
 
-        $userID = $user->id;
+        if (!empty($user)) {
+            $userID = $user->id;
 
-        $userFirebase = Firebase::where('user_id', $userID)->where('device', $device)->first();
+            $userFirebase = Firebase::where('user_id', $userID)->where('device', $device)->first();
 
-        $userCode = $userFirebase->code;
+            $userCode = $userFirebase->code;
 
-        if ($code == $userCode) {
+            if ($code == $userCode) {
 
-            $success['token'] = $user->createToken('MyApp')->accessToken;
+                $success['token'] = $user->createToken('MyApp')->accessToken;
 
-            $userFirebase->update([
-                'token' => $success['token']
-            ]);
+                $userFirebase->update([
+                    'token' => $success['token']
+                ]);
 
+                return Response()->json([
+                    'code' => $this->successStatus,
+                    'message' => 'کاربر کد را به درستی وارد کرده و ورود موفق',
+                    'data' => $success,
+                ]);
+
+            } elseif ($code !== $userCode)
+
+                return Response()->json([
+                    'code' => $this->failedStatus,
+                    'message' => 'کد صحیح نمی باشد',
+                ]);
+        } else {
             return Response()->json([
-                'code' => $this->successStatus,
-                'message' => 'کاربر کد را به درستی وارد کرده و ورود موفق',
-                'data' => $success,
+                'code' => $this->failedStatus,
+                'message' => 'این شماره صحبح نمی باشد',
             ]);
-
-        } elseif ($code !== $userCode)
-
-            $userFirebase->delete();
-
-        return Response()->json([
-            'code' => $this->failedStatus,
-            'message' => 'کاربر کد را به درستی وارد نکرده و خطای عدم دسترسی ',
-        ]);
+        }
     }
 
     public function update(Request $request)
@@ -237,7 +233,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'regex:/^[a-zA-Z]+$/u|max:12',
-            'phone' => 'required',
+            'phone' => 'required|unique:users',
             'device' => 'required',
             'code' => 'required|max:4',
 
@@ -259,7 +255,6 @@ class UserController extends Controller
         $code = $request->code;
 
         $user_id = Auth::user()->id;
-
         $check_device = Firebase::where('user_id', $user_id)->where('device', $device)->first();
         $user_code = $check_device['code'];
 
@@ -297,6 +292,11 @@ class UserController extends Controller
                     'token' => $success
                 ]);
             }
+        } else {
+            return Response()->json([
+                'code' => $this->successStatus,
+                'message' => 'کد صحیح نمی باشد',
+            ]);
         }
 
     }
@@ -304,7 +304,6 @@ class UserController extends Controller
     public function logout(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'token' => 'required',
             'device' => 'required',
         ]);
 
@@ -318,11 +317,14 @@ class UserController extends Controller
                 ]);
         }
 
-        $token = $request->token;
+        $user_id = Auth::user()->id;
         $device = $request->device;
+        $token_check = Firebase::where('user_id' , $user_id)->where('device' ,$device)->first();
+        $token_check->update([
+                'token' => null
+            ]
 
-        $user = Firebase::where('token', $token)->where('device', $device)->first();
-        $user->delete();
+        );
 
         return Response()->json([
             'code' => $this->successStatus,
