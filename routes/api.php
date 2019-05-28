@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ,'middleware' => 'auth:api'], function () {
 
     Route::post('/user/edit', 'UserController@update');
+    Route::post('/user/info', 'UserController@info');
     Route::post('/update/verify', 'UserController@verificationUpdate');
     Route::post('/logout', 'UserController@logout');
 

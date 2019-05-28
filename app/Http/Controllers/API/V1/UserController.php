@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API\V1;
 use App\Events\SMSCreated;
 use App\User;
 use Kavenegar\KavenegarApi;
-use phpDocumentor\Reflection\DocBlock\Tags\Return_;
 use Validator;
 use App\Firebase;
 use http\Env\Response;
@@ -41,16 +40,14 @@ class UserController extends Controller
         $phone = $request->phone;
         $device = $request->device;
         $user = User::where('phone', $phone)->first();
-
-        if(!empty($user)){
+        if (!empty($user)) {
 
             $user_id = $user->id;
             $check_device = Firebase::where('user_id', $user_id)->where('device', $device)->first();
 
             if (!empty($check_device)) {
-                $check_device->update([
-                    'code' => 2222
-                ]);
+
+                event(new SMSCreated($user_id, $device));
 
                 return response()->json([
                     'code' => $this->successStatus,
@@ -60,8 +57,9 @@ class UserController extends Controller
                 Firebase::create([
                     'user_id' => $user_id,
                     'device' => $device,
-                    'code' => 4444
                 ]);
+
+                event(new SMSCreated($user_id, $device));
 
                 return Response()->json([
                     'code' => $this->successStatus,
@@ -79,7 +77,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'regex:/^[a-zA-Z]+$/u|max:12',
-            'phone' => 'unique:users|max:11',
+            'phone' => 'unique:users|max:14',
             'device' => 'required',
         ]);
 
@@ -109,8 +107,7 @@ class UserController extends Controller
             'device' => $device,
         ]);
 
-        event(new SMSCreated($user_id,$device));
-
+        event(new SMSCreated($user_id, $device));
 
         return response()->json([
             'code' => $this->successStatus,
@@ -220,10 +217,13 @@ class UserController extends Controller
             } else {
 
                 $user_id = Auth::user()->id;
-                $check_device = Firebase::where('user_id', $user_id)->first();
-                $check_device->update([
-                    'code' => 2525
+                $user = User::where('id', $user_id)->first();
+                $user->update([
+                    'phone' => $phone
                 ]);
+                $check_device = Firebase::where('user_id', $user_id)->first();
+                $device = $check_device->device;
+                event(new SMSCreated($user_id, $device));
 
                 return Response()->json([
                     'code' => $this->successStatus,
@@ -324,7 +324,7 @@ class UserController extends Controller
 
         $user_id = Auth::user()->id;
         $device = $request->device;
-        $token_check = Firebase::where('user_id' , $user_id)->where('device' ,$device)->first();
+        $token_check = Firebase::where('user_id', $user_id)->where('device', $device)->first();
         $token_check->update([
                 'token' => null
             ]
@@ -335,6 +335,20 @@ class UserController extends Controller
             'code' => $this->successStatus,
             'message' => 'کاربر با موفقیت حذف شد',
         ]);
+    }
+
+    public function info()
+    {
+        $user = Auth::user();
+        return Response()->json(
+            [
+                'code' => $this->successStatus,
+                'message' => 'مشخصات کاربر',
+                'data' => [
+                    'name' => $user->name,
+                    'phone' => $user->phone,
+                ]
+            ]);
     }
 }
 

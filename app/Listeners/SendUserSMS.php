@@ -4,11 +4,13 @@ namespace App\Listeners;
 
 use App\Events\SMSCreated;
 use App\Firebase;
+use App\User;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Ipecompany\Smsirlaravel\Smsirlaravel;
 use Kavenegar\KavenegarApi;
 
-class SendUserSMS
+class SendUserSMS implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -28,13 +30,17 @@ class SendUserSMS
      */
     public function handle(SMSCreated $event)
     {
-        $api = new KavenegarApi(env('KAVEH_NEGAR_API_KEY'));
-        $random_number = rand(1,10000);
+        $digits = 5;
+        $random_number = rand(pow(10, $digits-1), pow(10, $digits)-1);
         $check_device = Firebase::where('user_id' , $event->user_id)->where('device' ,$event->device)->first();
         $check_device->update([
             'code' => $random_number
         ]);
-        $api->Send(env('SENDER_MOBILE'),env('KAVEH_NAGER_RECEPTOR'), $random_number);
 
+        $text = "برای فعال سازی حساب خود از این کد استفاده کنید : ".$random_number ;
+        $id = $event->user_id ;
+        $user =User::where('id' , $id)->first();
+
+        Smsirlaravel::send($text,$user->phone);
     }
 }

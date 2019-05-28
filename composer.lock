@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b65b43973f0c1abd0f2e3d434e038ee0",
+    "content-hash": "c3bfcd1498a94800c7f3adeb2c5343c1",
     "packages": [
         {
             "name": "defuse/php-encryption",
@@ -662,6 +662,52 @@
                 "url"
             ],
             "time": "2018-12-04T20:46:45+00:00"
+        },
+        {
+            "name": "hoseinrezaei/smsirlaravel",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hoseinrezaei/SmsirLaravel.git",
+                "reference": "807c4b49963753b46b3b2b8c2f72013366f548ae"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hoseinrezaei/SmsirLaravel/zipball/807c4b49963753b46b3b2b8c2f72013366f548ae",
+                "reference": "807c4b49963753b46b3b2b8c2f72013366f548ae",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~6.0",
+                "symfony/psr-http-message-bridge": "1.*.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ipecompany\\Smsirlaravel\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "moein.alizadeh",
+                    "email": "moein.alizade@gmail.com"
+                }
+            ],
+            "description": "Official Sms.ir Laravel Package",
+            "keywords": [
+                "laravel",
+                "notifacation",
+                "sendsms",
+                "sms",
+                "sms.ir",
+                "اس ام اس",
+                "پیامک"
+            ],
+            "time": "2019-05-06T08:34:47+00:00"
         },
         {
             "name": "jakub-onderka/php-console-color",
@@ -5355,7 +5401,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "hoseinrezaei/smsirlaravel": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
