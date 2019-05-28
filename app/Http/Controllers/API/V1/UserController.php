@@ -4,16 +4,12 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Events\SMSCreated;
 use App\User;
-use Kavenegar\KavenegarApi;
 use Validator;
 use App\Firebase;
 use http\Env\Response;
 use Illuminate\Http\Request;
-use PhpParser\Node\Stmt\Else_;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Monolog\Handler\SyslogUdp\UdpSocket;
-
 
 class UserController extends Controller
 {
@@ -178,7 +174,7 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'regex:/^[a-zA-Z]+$/u|max:12',
+            'name' => 'regex:/^[a-zA-Z]+$/u|max:15',
 
         ]);
 
@@ -216,14 +212,12 @@ class UserController extends Controller
                 ]);
             } else {
 
-                $user_id = Auth::user()->id;
-                $user = User::where('id', $user_id)->first();
-                $user->update([
+                Auth::user()->update([
                     'phone' => $phone
                 ]);
-                $check_device = Firebase::where('user_id', $user_id)->first();
+                $check_device = Firebase::where('user_id', Auth::user()->id)->first();
                 $device = $check_device->device;
-                event(new SMSCreated($user_id, $device));
+                event(new SMSCreated(Auth::user()->id, $device));
 
                 return Response()->json([
                     'code' => $this->successStatus,
@@ -238,9 +232,9 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'regex:/^[a-zA-Z]+$/u|max:12',
-            'phone' => 'required|unique:users',
+            'phone' => 'required',
             'device' => 'required',
-            'code' => 'required|max:4',
+            'code' => 'required|max:5',
 
         ]);
 
@@ -333,7 +327,7 @@ class UserController extends Controller
 
         return Response()->json([
             'code' => $this->successStatus,
-            'message' => 'کاربر با موفقیت حذف شد',
+            'message' => 'کاربر با موفقیت از اپلیکیشن خارج شد',
         ]);
     }
 
