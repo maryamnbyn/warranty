@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    private $successStatus = 1;
-    private $failedStatus = -1;
+    private $successStatus =  1;
+    private $failedStatus  = -1;
 
     public function index(Request $request)
     {
@@ -29,6 +29,7 @@ class ProductController extends Controller
                     "message" => "نمایش همه محصولات",
                     "data" =>
                         collect($products->items())->map(function ($products) {
+
                             return collect($products)->except([
                                     'created_at',
                                     'updated_at'
@@ -36,7 +37,6 @@ class ProductController extends Controller
                             );
                         }),
                     'has_more' => $products->hasMorePages()
-
                 ]
             );
         } elseif ($status == 'expired') {
@@ -50,6 +50,7 @@ class ProductController extends Controller
                     "code" => $this->successStatus,
                     "message" => "نمایش همه محصولات منقضی شده",
                     "data" => collect($products->items())->map(function ($products) {
+
                         return collect($products)->except([
                                 'created_at',
                                 'updated_at'
@@ -57,7 +58,6 @@ class ProductController extends Controller
                         );
                     }),
                     'has_more' => $products->hasMorePages()
-
                 ]
             );
         } elseif ($status == 'valid') {
@@ -78,16 +78,15 @@ class ProductController extends Controller
                         );
                     }),
                     'has_more' => $products->hasMorePages()
-
                 ]
             );
         } elseif ($status == 'expiring') {
+            $carbon = Carbon::now();
+            $two_month_ago = $carbon->subMonth(2);
             $now = Carbon::now();
-            $two_month_ago = $now->subMonth(2);
-            $now_1 = Carbon::now();
 
             $products = Product::where('user_id', $user_id)
-                ->whereBetween('end_date_of_warranty', [$two_month_ago, $now_1])
+                ->whereBetween('end_date_of_warranty', [$two_month_ago, $now])
                 ->paginate(config('page.paginate_page'));
 
             return response()->json(
@@ -102,7 +101,6 @@ class ProductController extends Controller
                         );
                     }),
                     'has_more' => $products->hasMorePages()
-
                 ]
             );
         }
@@ -132,10 +130,10 @@ class ProductController extends Controller
                 ]);
         }
 
-        $image = $request->file('image');
-        $product = Product::create(
+            $image = $request->file('image');
+            $product = Product::create(
             $request->except('image'));
-        $product->storeProduct($image);
+            $product->storeProduct($image);
 
         return Response()->json([
             'code' => $this->successStatus,
@@ -171,7 +169,7 @@ class ProductController extends Controller
 
         $product->update(
             $request->except('image'));
-        $product->updateProduct($image);
+            $product->updateProduct($image);
 
         return Response()->json([
             'code' => $this->successStatus,

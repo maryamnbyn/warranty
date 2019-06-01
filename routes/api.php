@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
-//token
+//User Route token
 
 Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ,'middleware' => 'auth:api'], function () {
 
