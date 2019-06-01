@@ -31,13 +31,18 @@ Route::group(['namespace' => 'API\V1', 'prefix' => 'v1'], function () {
     Route::post('/register/verify', 'UserController@verificationRegister');
     Route::post('/register', 'UserController@register');
     Route::post('/login', 'UserController@login');
-
-
 });
 
 //product Route
 Route::group(['namespace' => 'API\V1', 'prefix' => 'v1'], function () {
+});
 
+//product Route token
+Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ,'middleware' => 'auth:api'], function () {
+
+    Route::post('/products', 'ProductController@store');
     Route::get('/products', 'ProductController@index');
+    Route::post('/product/update/{product}', 'ProductController@update');
+    Route::post('/product/destroy/{product}', 'ProductController@destroy');
 
 });

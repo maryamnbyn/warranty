@@ -16,15 +16,17 @@ class SMSCreated
 
     public $user_id;
     public $device;
+    public $phone;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user_id,$device)
+    public function __construct($user_id,$device,$phone)
     {
         $this->user_id = $user_id;
         $this->device = $device;
+        $this->phone = $phone;
     }
 
     /**

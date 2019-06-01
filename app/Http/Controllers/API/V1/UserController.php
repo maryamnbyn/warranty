@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Events\SMSCreated;
 use App\User;
+use DemeterChain\A;
 use Validator;
 use App\Firebase;
 use http\Env\Response;
@@ -43,7 +44,7 @@ class UserController extends Controller
 
             if (!empty($check_device)) {
 
-                event(new SMSCreated($user_id, $device));
+                event(new SMSCreated($user_id, $device,$phone));
 
                 return response()->json([
                     'code' => $this->successStatus,
@@ -55,7 +56,7 @@ class UserController extends Controller
                     'device' => $device,
                 ]);
 
-                event(new SMSCreated($user_id, $device));
+                event(new SMSCreated($user_id, $device,$phone));
 
                 return Response()->json([
                     'code' => $this->successStatus,
@@ -103,7 +104,7 @@ class UserController extends Controller
             'device' => $device,
         ]);
 
-        event(new SMSCreated($user_id, $device));
+        event(new SMSCreated($user_id, $device,$phone));
 
         return response()->json([
             'code' => $this->successStatus,
@@ -190,6 +191,7 @@ class UserController extends Controller
 
         $name = $request->name;
         $phone = $request->phone;
+        $device = $request->device;
 
         if (empty($phone)) {
             Auth::user()->update([
@@ -211,13 +213,8 @@ class UserController extends Controller
                     'message' => 'این شماره قبلا ثبت شده است وخطای عدم دسترسی',
                 ]);
             } else {
-
-                Auth::user()->update([
-                    'phone' => $phone
-                ]);
-                $check_device = Firebase::where('user_id', Auth::user()->id)->first();
-                $device = $check_device->device;
-                event(new SMSCreated(Auth::user()->id, $device));
+                $user_id = Auth::user()->id;
+                event(new SMSCreated($user_id, $device,$phone));
 
                 return Response()->json([
                     'code' => $this->successStatus,
@@ -253,7 +250,7 @@ class UserController extends Controller
         $device = $request->device;
         $code = $request->code;
 
-        $user_id = Auth::user()->id;
+        $user_id = Auth::user()->token()->user_id;
         $check_device = Firebase::where('user_id', $user_id)->where('device', $device)->first();
         $user_code = $check_device['code'];
 
@@ -273,7 +270,7 @@ class UserController extends Controller
                 return Response()->json([
                     'code' => $this->successStatus,
                     'message' => 'تغییرات شماره انجام شد',
-                    'token' => $success
+                    'data' => $success
                 ]);
             } else {
                 $check_device->update([
@@ -288,7 +285,7 @@ class UserController extends Controller
                 return Response()->json([
                     'code' => $this->successStatus,
                     'message' => 'تغییرات نام و شماره انجام شد',
-                    'token' => $success
+                    'data' => $success
                 ]);
             }
         } else {
@@ -302,38 +299,19 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'device' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            $validate = collect($validator->errors());
-
-            return Response()->json(
-                [
-                    'code' => $this->failedStatus,
-                    'message' => $validate->collapse()[0]
-                ]);
-        }
-
-        $user_id = Auth::user()->id;
-        $device = $request->device;
-        $token_check = Firebase::where('user_id', $user_id)->where('device', $device)->first();
-        $token_check->update([
-                'token' => null
-            ]
-
-        );
-
+        $request->user()->token()->revoke();
         return Response()->json([
-            'code' => $this->successStatus,
-            'message' => 'کاربر با موفقیت از اپلیکیشن خارج شد',
-        ]);
+                'code' => $this->successStatus,
+                'message' => 'کاربر با موفقیت از سیستم خارج شد!'
+
+            ]);
+
     }
 
     public function info()
     {
         $user = Auth::user();
+
         return Response()->json(
             [
                 'code' => $this->successStatus,

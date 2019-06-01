@@ -38,9 +38,6 @@ class SendUserSMS implements ShouldQueue
         ]);
 
         $text = "برای فعال سازی حساب خود از این کد استفاده کنید : ".$random_number ;
-        $id = $event->user_id ;
-        $user =User::where('id' , $id)->first();
-
-        Smsirlaravel::send($text,$user->phone);
+        Smsirlaravel::send($text,$event->phone);
     }
 }
