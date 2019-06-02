@@ -16,6 +16,7 @@ class UserController extends Controller
 {
     private $successStatus = 1;
     private $failedStatus = -1;
+    private $successUpdate = 2;
 
     public function login(Request $request)
     {
@@ -44,7 +45,7 @@ class UserController extends Controller
 
             if (!empty($check_device)) {
 
-                event(new SMSCreated($user_id, $device,$phone));
+                event(new SMSCreated($user_id, $device, $phone));
 
                 return response()->json([
                     'code' => $this->successStatus,
@@ -56,7 +57,7 @@ class UserController extends Controller
                     'device' => $device,
                 ]);
 
-                event(new SMSCreated($user_id, $device,$phone));
+                event(new SMSCreated($user_id, $device, $phone));
 
                 return Response()->json([
                     'code' => $this->successStatus,
@@ -73,7 +74,7 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'max:12',
+            'name' => 'max:16',
             'phone' => 'unique:users|max:14',
             'device' => 'required',
         ]);
@@ -104,7 +105,7 @@ class UserController extends Controller
             'device' => $device,
         ]);
 
-        event(new SMSCreated($user_id, $device,$phone));
+        event(new SMSCreated($user_id, $device, $phone));
 
         return response()->json([
             'code' => $this->successStatus,
@@ -214,10 +215,10 @@ class UserController extends Controller
                 ]);
             } else {
                 $user_id = Auth::user()->id;
-                event(new SMSCreated($user_id, $device,$phone));
+                event(new SMSCreated($user_id, $device, $phone));
 
                 return Response()->json([
-                    'code' => $this->successStatus,
+                    'code' => $this->successUpdate,
                     'message' => 'کد برای شما ارسال شد',
                 ]);
             }
@@ -301,10 +302,10 @@ class UserController extends Controller
     {
         $request->user()->token()->revoke();
         return Response()->json([
-                'code' => $this->successStatus,
-                'message' => 'کاربر با موفقیت از سیستم خارج شد!'
+            'code' => $this->successStatus,
+            'message' => 'کاربر با موفقیت از سیستم خارج شد!'
 
-            ]);
+        ]);
 
     }
 
