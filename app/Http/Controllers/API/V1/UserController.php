@@ -176,7 +176,7 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'regex:/^[a-zA-Z]+$/u|max:15',
+            'name' => 'max:15',
 
         ]);
 
