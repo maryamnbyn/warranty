@@ -22,9 +22,6 @@ class CreateProductsTable extends Migration
             $table->string('image');
             $table->date('end_date_of_warranty');
             $table->integer('factor_number')->unsigned();
-            $table->boolean('is_reminder')->default(false);
-            $table->date('reminder_date')->nullable();
-            $table->boolean('sms_reminder')->default(false);
             $table->integer('seller_phone')->unsigned();
             $table->text('store_address');
             $table->timestamps();

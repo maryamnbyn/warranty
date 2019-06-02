@@ -21,8 +21,6 @@ Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ,'middleware' => 'auth:a
     Route::post('/user/info', 'UserController@info');
     Route::post('/update/verify', 'UserController@verificationUpdate');
     Route::post('/logout', 'UserController@logout');
-
-
 });
 //login and register route
 
@@ -33,13 +31,9 @@ Route::group(['namespace' => 'API\V1', 'prefix' => 'v1'], function () {
     Route::post('/login', 'UserController@login');
 });
 
-//product Route
-Route::group(['namespace' => 'API\V1', 'prefix' => 'v1'], function () {
-});
-
 //product Route token
 Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ,'middleware' => 'auth:api'], function () {
-
+    Route::get('/products/{product}', 'ProductController@show');
     Route::post('/products', 'ProductController@store');
     Route::get('/products', 'ProductController@index');
     Route::post('/product/update/{product}', 'ProductController@update');

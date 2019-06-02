@@ -73,7 +73,7 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'regex:/^[a-zA-Z]+$/u|max:12',
+            'name' => 'max:12',
             'phone' => 'unique:users|max:14',
             'device' => 'required',
         ]);

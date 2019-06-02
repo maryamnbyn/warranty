@@ -23,8 +23,7 @@ class ProductController extends Controller
 
         if ($status == 'all') {
 
-            return response()->json(
-                [
+            return response()->json([
                     "code" => $this->successStatus,
                     "message" => "نمایش همه محصولات",
                     "data" =>
@@ -115,7 +114,6 @@ class ProductController extends Controller
             'image' => 'required',
             'end_date_of_warranty' => 'required',
             'factor_number' => 'required',
-            'reminder_date' => 'required',
             'seller_phone' => 'required',
             'store_address' => 'required',
         ]);
@@ -150,7 +148,6 @@ class ProductController extends Controller
             'image' => 'required',
             'end_date_of_warranty' => 'required',
             'factor_number' => 'required',
-            'reminder_date' => 'required',
             'seller_phone' => 'required',
             'store_address' => 'required',
         ]);
@@ -186,6 +183,15 @@ class ProductController extends Controller
                 'message' => 'محصول با موفقیت حذف شد!',
             ]);
         }
+    }
+
+    public function show(Product $product)
+    {
+        return Response()->json([
+            'code' => $this->successStatus,
+            'message' => 'نمایش یک محصول',
+            'data' => $product,
+        ]);
     }
 
 }
