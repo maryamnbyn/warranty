@@ -17,6 +17,22 @@ class UserController extends Controller
     private $failedStatus = -1;
     private $successUpdate = 2;
 
+
+    public function info()
+    {
+        $user = Auth::user();
+
+        return Response()->json(
+            [
+                'code' => $this->successStatus,
+                'message' => 'مشخصات کاربر',
+                'data' => [
+                    'name' => $user->name,
+                    'phone' => $user->phone,
+                ]
+            ]);
+    }
+
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -123,6 +139,17 @@ class UserController extends Controller
 
     }
 
+    public function logout(Request $request)
+    {
+        $request->user()->token()->revoke();
+        return Response()->json([
+            'code' => $this->successStatus,
+            'message' => 'کاربر با موفقیت از سیستم خارج شد!'
+
+        ]);
+
+    }
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -165,67 +192,6 @@ class UserController extends Controller
         ]);
 
     }
-
-    public function verificationRegister(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'code' => 'required|min:4',
-            'device' => 'required',
-            'phone' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            $validate = collect($validator->errors());
-
-            return Response()->json(
-                [
-                    'code' => $this->failedStatus,
-                    'message' => $validate->collapse()[0]
-                ]);
-        }
-
-        $phone = $request->phone;
-        $code = $request->code;
-        $device = $request->device;
-
-        $user = User::where('phone', $phone)->first();
-
-        if (!empty($user)) {
-            $userID = $user->id;
-
-            $userFirebase = Firebase::where('user_id', $userID)->where('device', $device)->first();
-
-            $userCode = $userFirebase->code;
-
-            if ($code == $userCode) {
-
-                $success['token'] = $user->createToken('MyApp')->accessToken;
-
-                $userFirebase->update([
-                    'token' => $success['token']
-                ]);
-
-                return Response()->json([
-                    'code' => $this->successStatus,
-                    'message' => 'کاربر کد را به درستی وارد کرده و ورود موفق',
-                    'data' => $success,
-                ]);
-
-            } elseif ($code !== $userCode)
-
-                return Response()->json([
-                    'code' => $this->failedStatus,
-                    'message' => 'کد صحیح نمی باشد',
-                ]);
-        } else {
-            return Response()->json([
-                'code' => $this->failedStatus,
-                'message' => 'این شماره صحبح نمی باشد',
-            ]);
-        }
-    }
-
-
 
     public function verificationUpdate(Request $request)
     {
@@ -292,37 +258,71 @@ class UserController extends Controller
             }
         } else {
             return Response()->json([
-                'code' => $this->successStatus,
+                'code' => $this->failedStatus,
                 'message' => 'کد صحیح نمی باشد',
             ]);
         }
 
     }
 
-    public function logout(Request $request)
+    public function verificationRegister(Request $request)
     {
-        $request->user()->token()->revoke();
-        return Response()->json([
-            'code' => $this->successStatus,
-            'message' => 'کاربر با موفقیت از سیستم خارج شد!'
-
+        $validator = Validator::make($request->all(), [
+            'code' => 'required|min:4',
+            'device' => 'required',
+            'phone' => 'required',
         ]);
 
-    }
+        if ($validator->fails()) {
+            $validate = collect($validator->errors());
 
-    public function info()
-    {
-        $user = Auth::user();
+            return Response()->json(
+                [
+                    'code' => $this->failedStatus,
+                    'message' => $validate->collapse()[0]
+                ]);
+        }
 
-        return Response()->json(
-            [
-                'code' => $this->successStatus,
-                'message' => 'مشخصات کاربر',
-                'data' => [
-                    'name' => $user->name,
-                    'phone' => $user->phone,
-                ]
+        $phone = $request->phone;
+        $code = $request->code;
+        $device = $request->device;
+
+        $user = User::where('phone', $phone)->first();
+
+        if (!empty($user)) {
+            $userID = $user->id;
+
+            $userFirebase = Firebase::where('user_id', $userID)->where('device', $device)->first();
+
+            $userCode = $userFirebase->code;
+
+            if ($code == $userCode) {
+
+                $success['token'] = $user->createToken('MyApp')->accessToken;
+
+                $userFirebase->update([
+                    'token' => $success['token']
+                ]);
+
+                return Response()->json([
+                    'code' => $this->successStatus,
+                    'message' => 'کاربر کد را به درستی وارد کرده و ورود موفق',
+                    'data' => $success,
+                ]);
+
+            } elseif ($code !== $userCode)
+
+                return Response()->json([
+                    'code' => $this->failedStatus,
+                    'message' => 'کد صحیح نمی باشد',
+                ]);
+        } else {
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => 'این شماره صحبح نمی باشد',
             ]);
+        }
     }
+
 }
 
