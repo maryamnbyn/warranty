@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Events\SMSCreated;
 use App\User;
-use DemeterChain\A;
 use Validator;
 use App\Firebase;
 use http\Env\Response;
+use App\Events\SMSCreated;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -69,6 +68,59 @@ class UserController extends Controller
             'code' => $this->failedStatus,
             'message' => 'کاربر با این شماره وجود نداشته است!',
         ]);
+    }
+
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'max:15',
+
+        ]);
+
+        if ($validator->fails()) {
+            $validate = collect($validator->errors());
+
+            return Response()->json(
+                [
+                    'code' => $this->failedStatus,
+                    'message' => $validate->collapse()[0]
+                ]);
+        }
+
+        $name = $request->name;
+        $phone = $request->phone;
+        $device = $request->device;
+
+        if (empty($phone)) {
+            Auth::user()->update([
+                'name' => $name
+            ]);
+
+            return Response()->json([
+                'code' => $this->successStatus,
+                'message' => 'تغییر نام انجام شد',
+            ]);
+        } else {
+
+            $user = User::where('phone', $phone)->first();
+
+            if (!empty($user)) {
+
+                return Response()->json([
+                    'code' => $this->failedStatus,
+                    'message' => 'این شماره قبلا ثبت شده است وخطای عدم دسترسی',
+                ]);
+            } else {
+                $user_id = Auth::user()->id;
+                event(new SMSCreated($user_id, $device, $phone));
+
+                return Response()->json([
+                    'code' => $this->successUpdate,
+                    'message' => 'کد برای شما ارسال شد',
+                ]);
+            }
+        }
+
     }
 
     public function register(Request $request)
@@ -173,63 +225,12 @@ class UserController extends Controller
         }
     }
 
-    public function update(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'max:15',
 
-        ]);
-
-        if ($validator->fails()) {
-            $validate = collect($validator->errors());
-
-            return Response()->json(
-                [
-                    'code' => $this->failedStatus,
-                    'message' => $validate->collapse()[0]
-                ]);
-        }
-
-        $name = $request->name;
-        $phone = $request->phone;
-        $device = $request->device;
-
-        if (empty($phone)) {
-            Auth::user()->update([
-                'name' => $name
-            ]);
-
-            return Response()->json([
-                'code' => $this->successStatus,
-                'message' => 'تغییر نام انجام شد',
-            ]);
-        } else {
-
-            $user = User::where('phone', $phone)->first();
-
-            if (!empty($user)) {
-
-                return Response()->json([
-                    'code' => $this->failedStatus,
-                    'message' => 'این شماره قبلا ثبت شده است وخطای عدم دسترسی',
-                ]);
-            } else {
-                $user_id = Auth::user()->id;
-                event(new SMSCreated($user_id, $device, $phone));
-
-                return Response()->json([
-                    'code' => $this->successUpdate,
-                    'message' => 'کد برای شما ارسال شد',
-                ]);
-            }
-        }
-
-    }
 
     public function verificationUpdate(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'regex:/^[a-zA-Z]+$/u|max:12',
+            'name' => 'max:12',
             'phone' => 'required',
             'device' => 'required',
             'code' => 'required|max:5',
