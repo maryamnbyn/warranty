@@ -121,17 +121,17 @@ class ProductController extends Controller
         if ($validator->fails()) {
             $validate = collect($validator->errors());
 
-            return Response()->json(
-                [
+            return Response()->json([
                     'code' => $this->failedStatus,
                     'message' => $validate->collapse()[0]
                 ]);
         }
 
-            $image = $request->file('image');
-            $product = Product::create(
-            $request->except('image'));
-            $product->storeProduct($image);
+        $product = Product::create(
+            array_merge($request->except('image'),['user_id' => Auth::user()->id])
+        );
+        $image = $request->file('image');
+        $product->storeProduct($image);
 
         return Response()->json([
             'code' => $this->successStatus,
