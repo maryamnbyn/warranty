@@ -2,17 +2,59 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Http\Controllers\Controller;
-use Carbon\Carbon;
 use Validator;
 use App\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
-    private $successStatus =  1;
-    private $failedStatus  = -1;
+    private $successStatus = 1;
+    private $failedStatus = -1;
+
+    public function show(Product $product)
+    {
+        return Response()->json([
+            'code' => $this->successStatus,
+            'message' => 'نمایش یک محصول',
+            'data' => $product,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'warranty_number' => 'required|unique:products',
+            'purchase_date' => 'required',
+            'end_date_of_warranty' => 'required',
+            'factor_number' => 'required',
+            'seller_phone' => 'required',
+            'store_address' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $validate = collect($validator->errors());
+
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => $validate->collapse()[0]
+            ]);
+        }
+
+        $product = Product::create(
+            array_merge($request->except('image'),['user_id' => Auth::user()->id])
+        );
+        $image = $request->file('image');
+        $product->storeProduct($image);
+
+        return Response()->json([
+            'code' => $this->successStatus,
+            'message' => 'محصول با موفقیت ثبت شد!',
+        ]);
+    }
 
     public function index(Request $request)
     {
@@ -105,37 +147,15 @@ class ProductController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function destroy(Product $product)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'warranty_number' => 'required|unique:products',
-            'purchase_date' => 'required',
-            'end_date_of_warranty' => 'required',
-            'factor_number' => 'required',
-            'seller_phone' => 'required',
-            'store_address' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            $validate = collect($validator->errors());
-
+        if ($product != null) {
+            $product->deleteProduct();
             return Response()->json([
-                    'code' => $this->failedStatus,
-                    'message' => $validate->collapse()[0]
-                ]);
+                'code' => $this->successStatus,
+                'message' => 'محصول با موفقیت حذف شد!',
+            ]);
         }
-
-        $product = Product::create(
-            array_merge($request->except('image'),['user_id' => Auth::user()->id])
-        );
-        $image = $request->file('image');
-        $product->storeProduct($image);
-
-        return Response()->json([
-            'code' => $this->successStatus,
-            'message' => 'محصول با موفقیت ثبت شد!',
-        ]);
     }
 
     public function update(Request $request, Product $product)
@@ -165,31 +185,11 @@ class ProductController extends Controller
 
         $product->update(
             $request->except('image'));
-            $product->updateProduct($image);
+        $product->updateProduct($image);
 
         return Response()->json([
             'code' => $this->successStatus,
             'message' => 'محصول با موفقیت تغییر کرد!',
-        ]);
-    }
-
-    public function destroy(Product $product)
-    {
-        if ($product != null) {
-            $product->deleteProduct();
-            return Response()->json([
-                'code' => $this->successStatus,
-                'message' => 'محصول با موفقیت حذف شد!',
-            ]);
-        }
-    }
-
-    public function show(Product $product)
-    {
-        return Response()->json([
-            'code' => $this->successStatus,
-            'message' => 'نمایش یک محصول',
-            'data' => $product,
         ]);
     }
 

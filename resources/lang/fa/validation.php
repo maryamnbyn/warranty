@@ -134,6 +134,9 @@ return array(
         "tags" => "تگ ها",
         "category" => "دسته",
         "warranty_number" => "شماره گارانتی"
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5030c887561e11f47e2eafa88c767d4adcc1f955
     ),
 );

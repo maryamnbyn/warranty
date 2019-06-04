@@ -13,8 +13,9 @@ class Product extends Model
     {
         if (!empty(request()->file('image')))
         {
-            $picName = $pic->store('upload', 'asset');
-            $product_Pic = pathinfo($picName, PATHINFO_BASENAME);
+            $get_full_name_pic = $pic->getClientOriginalName();
+            $get_path_pic = $pic->storeAs('upload', $get_full_name_pic,'asset');
+            $product_Pic = pathinfo($get_path_pic, PATHINFO_BASENAME);
             $this->update([
                 'image' => $product_Pic
             ]);
@@ -26,8 +27,9 @@ class Product extends Model
         if (!empty(request()->file('image')))
         {
             unlink(public_path('picture/upload/'.$this->image));
-            $picName = $pic->store('upload', 'asset');
-            $ProductPic = pathinfo($picName, PATHINFO_BASENAME);
+            $get_full_name_pic = $pic->getClientOriginalName();
+            $get_path_pic = $pic->storeAs('upload', $get_full_name_pic,'asset');
+            $ProductPic = pathinfo($get_path_pic, PATHINFO_BASENAME);
             $this->update([
                 'image' => $ProductPic
             ]);
