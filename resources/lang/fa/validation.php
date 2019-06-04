@@ -133,6 +133,6 @@ return array(
         "slug" => "نامک",
         "tags" => "تگ ها",
         "category" => "دسته",
-        "warranty_number" => "شماره گارنتی"
+        "warranty_number" => "شماره گارانتی"
     ),
 );

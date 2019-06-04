@@ -29,7 +29,6 @@ class ProductController extends Controller
             'name' => 'required',
             'warranty_number' => 'required|unique:products',
             'purchase_date' => 'required',
-            'image' => 'required',
             'end_date_of_warranty' => 'required',
             'factor_number' => 'required',
             'seller_phone' => 'required',
@@ -45,13 +44,10 @@ class ProductController extends Controller
             ]);
         }
 
-        $image = $request->file('image');
-        $request->user_id = Auth::user()->id;
-
         $product = Product::create(
-            $request->except('image')
+            array_merge($request->except('image'),['user_id' => Auth::user()->id])
         );
-
+        $image = $request->file('image');
         $product->storeProduct($image);
 
         return Response()->json([

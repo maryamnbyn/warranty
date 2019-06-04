@@ -21,8 +21,8 @@ class CreateProductsTable extends Migration
             $table->date('purchase_date');
             $table->string('image')->nullable();
             $table->date('end_date_of_warranty');
-            $table->integer('factor_number')->nullable();
-            $table->integer('seller_phone')->nullable();
+            $table->string('factor_number')->nullable();
+            $table->string('seller_phone')->nullable();
             $table->text('store_address')->nullable();
             $table->timestamps();
         });
