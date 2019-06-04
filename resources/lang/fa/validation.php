@@ -132,6 +132,8 @@ return array(
         "videoUrl" => "آدرس ویدیو",
         "slug" => "نامک",
         "tags" => "تگ ها",
-        "category" => "دسته"
+        "category" => "دسته",
+        "warranty_number" => "شماره گارانتی"
+
     ),
 );

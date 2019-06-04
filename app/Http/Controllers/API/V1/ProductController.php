@@ -111,7 +111,6 @@ class ProductController extends Controller
             'name' => 'required',
             'warranty_number' => 'required|unique:products',
             'purchase_date' => 'required',
-            'image' => 'required',
             'end_date_of_warranty' => 'required',
             'factor_number' => 'required',
             'seller_phone' => 'required',
