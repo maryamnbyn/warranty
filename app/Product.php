@@ -16,10 +16,9 @@ class Product extends Model
         {
             $get_full_name_pic = $pic->getClientOriginalName();
             $get_path_pic = $pic->storeAs('upload', $get_full_name_pic,'asset');
-            dd($get_path_pic);
-            $product_Pic = pathinfo($get_path_pic, PATHINFO_BASENAME);
+            $ProductPic = pathinfo($get_path_pic, PATHINFO_BASENAME);
             $this->update([
-                'image' => $get_path_pic
+                'image' => $ProductPic
             ]);
         }
     }
@@ -40,7 +39,7 @@ class Product extends Model
 
     public function deleteProduct()
     {
-        unlink(public_path('picture/upload/'.$this->image));
+        unlink('picture/upload/'.$this->image);
         $this->delete();
     }
 

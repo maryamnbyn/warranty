@@ -1,6 +1,6 @@
 <?php
 return [
-    'paginate_page' => 4
+    'paginate_page' => 20
 ];
 ?>
 

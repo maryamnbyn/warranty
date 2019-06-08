@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use Illuminate\Http\File;
 use Illuminate\Support\Facades\Response;
 use Validator;
 use App\Product;
@@ -151,14 +152,19 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        if ($product != null) {
+        if ($product->image != null) {
             $product->deleteProduct();
             return Response()->json([
                 'code' => $this->successStatus,
                 'message' => 'محصول با موفقیت حذف شد!',
             ]);
         }
-    }
+            $product->delete();
+            return Response()->json([
+                'code' => $this->successStatus,
+                'message' => 'محصول با موفقیت حذف شد!',
+            ]);
+        }
 
     public function update(Request $request, Product $product)
     {
@@ -200,14 +206,10 @@ class ProductController extends Controller
         $file_path = 'picture/upload/'.$filename;
         if (file_exists($file_path))
         {
-            // Send Download
-            return Response::download($file_path, $filename, [
-                'Content-Length: '. filesize($file_path)
-            ]);
+            return Response::file($file_path);
         }
         else
         {
-            // Error
             exit('چنین عکسی موجود نمی باشد!');
         }
     }
