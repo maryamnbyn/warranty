@@ -15,9 +15,10 @@ class Product extends Model
         {
             $get_full_name_pic = $pic->getClientOriginalName();
             $get_path_pic = $pic->storeAs('upload', $get_full_name_pic,'asset');
+            dd($get_path_pic);
             $product_Pic = pathinfo($get_path_pic, PATHINFO_BASENAME);
             $this->update([
-                'image' => $product_Pic
+                'image' => $get_path_pic
             ]);
         }
     }

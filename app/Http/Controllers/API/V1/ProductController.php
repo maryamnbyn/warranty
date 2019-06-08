@@ -59,6 +59,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $status = $request->status;
+
         $user_id = Auth::user()->token()->user_id;
 
         $products = Product::where('user_id', $user_id)->paginate(config('page.paginate_page'));
@@ -181,10 +182,10 @@ class ProductController extends Controller
                 ]);
         }
 
-        $image = $request->file('image');
-
         $product->update(
-            $request->except('image'));
+            $request->except('image','user_id'));
+
+        $image = $request->file('image');
         $product->updateProduct($image);
 
         return Response()->json([
