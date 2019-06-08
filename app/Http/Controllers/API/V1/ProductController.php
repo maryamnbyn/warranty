@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use Illuminate\Support\Facades\Response;
 use Validator;
 use App\Product;
 use Carbon\Carbon;
@@ -193,5 +194,23 @@ class ProductController extends Controller
             'message' => 'محصول با موفقیت تغییر کرد!',
         ]);
     }
+
+    public function Downloadlink($filename)
+    {
+        $file_path = 'picture/upload/'.$filename;
+        if (file_exists($file_path))
+        {
+            // Send Download
+            return Response::download($file_path, $filename, [
+                'Content-Length: '. filesize($file_path)
+            ]);
+        }
+        else
+        {
+            // Error
+            exit('چنین عکسی موجود نمی باشد!');
+        }
+    }
+
 
 }
