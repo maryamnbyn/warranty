@@ -8,6 +8,7 @@ class Product extends Model
 {
     //
     protected $guarded =[];
+    protected $appends =['image_url'];
 
     public function storeProduct($pic)
     {
@@ -40,5 +41,11 @@ class Product extends Model
     {
         unlink(public_path('picture/upload/'.$this->image));
         $this->delete();
+    }
+
+    public function getImageUrlAttribute()
+    {
+        $url =  URL('')."/api/v1/download/$this->image";
+        return $url;
     }
 }

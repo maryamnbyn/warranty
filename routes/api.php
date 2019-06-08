@@ -40,3 +40,11 @@ Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ,'middleware' => 'auth:a
     Route::post('/product/destroy/{product}', 'ProductController@destroy');
 
 });
+
+//download link for pic
+Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ], function () {
+
+    Route::get('download/{filename}', 'ProductController@Downloadlink');
+
+});
+
