@@ -17,7 +17,6 @@ class UserController extends Controller
     public function info()
     {
         $user = Auth::user();
-
         return Response()->json(
             [
                 'code' => $this->successStatus,
@@ -32,11 +31,12 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'phone' => 'required|regex:/(09)[0-9]{9}',
+            'phone' => 'required|regex:/(09)[0-9]{9}/',
             'device' => 'required'
         ]);
 
         if ($validator->fails()) {
+
             $validate = collect($validator->errors());
 
             return Response()->json(
@@ -59,13 +59,16 @@ class UserController extends Controller
                 ->first();
 
             if (!empty($check_device)) {
+
                 event(new SMSCreated($user_id, $device, $phone));
 
                 return response()->json([
                     'code' => $this->successStatus,
                     'message' => 'کاربر از قبل وجود داشته و کد جدید برایش ارسال شد!',
                 ]);
+
             } else {
+
                 Firebase::create([
                     'user_id' => $user_id,
                     'device' => $device,
@@ -94,6 +97,7 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             $validate = collect($validator->errors());
+
             return Response()->json(
                 [
                     'code' => $this->failedStatus,
@@ -152,7 +156,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'max:16',
-            'phone' => 'unique:users|max:14|regex:/(09)[0-9]{9}',
+            'phone' => 'unique:users|max:14||regex:/(09)[0-9]{9}/',
             'device' => 'required',
         ]);
 
@@ -194,13 +198,14 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'max:12',
-            'phone' => 'required|regex:/(09)[0-9]{9}',
+            'phone' => 'required|regex:/(09)[0-9]{9}/',
             'device' => 'required',
             'code' => 'required|max:5',
         ]);
 
         if ($validator->fails()) {
             $validate = collect($validator->errors());
+
             return Response()->json(
                 [
                     'code' => $this->failedStatus,
@@ -215,12 +220,13 @@ class UserController extends Controller
 
         $user_id = Auth::user()->token()->user_id;
 
-        $check_device = Firebase::where('user_id', $user_id)->where('device', $device)->first();
+        $check_device = Firebase::where('user_id', $user_id)
+            ->where('device', $device)
+            ->first();
 
         $user_code = $check_device['code'];
 
         if ($code == $user_code) {
-
             $success['token'] = Auth::user()->createToken('MyApp')->accessToken;
 
             if (empty($name)) {
@@ -254,6 +260,7 @@ class UserController extends Controller
                     'data' => $success
                 ]);
             }
+
         } else {
 
             return Response()->json([
@@ -262,17 +269,18 @@ class UserController extends Controller
             ]);
         }
     }
-
     public function verificationRegister(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'code' => 'required|min:4',
             'device' => 'required',
-            'phone' => 'required|regex:/(09)[0-9]{9}',
+            'phone' => 'required|regex:/(09)[0-9]{9}/',
         ]);
 
         if ($validator->fails()) {
+
             $validate = collect($validator->errors());
+
             return Response()->json(
                 [
                     'code' => $this->failedStatus,
@@ -283,11 +291,16 @@ class UserController extends Controller
         $phone = $request->phone;
         $code = $request->code;
         $device = $request->device;
+
         $user = User::where('phone', $phone)->first();
 
         if (!empty($user)) {
             $userID = $user->id;
-            $userFirebase = Firebase::where('user_id', $userID)->where('device', $device)->first();
+
+            $userFirebase = Firebase::where('user_id', $userID)
+                ->where('device', $device)
+                ->first();
+
             $userCode = $userFirebase->code;
 
             if ($code == $userCode) {
@@ -302,6 +315,7 @@ class UserController extends Controller
                     'message' => 'کاربر کد را به درستی وارد کرده و ورود موفق',
                     'data' => $success,
                 ]);
+
             } elseif ($code !== $userCode)
 
                 return Response()->json([
