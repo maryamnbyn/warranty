@@ -143,11 +143,12 @@ class ProductController extends Controller
         elseif ($status == 'expiring') {
 
             $carbon = Carbon::now();
-            $two_month_ago = $carbon->subMonth(2);
+            $two_month_ago = $carbon->addMonths(2);
+            dd($two_month_ago);
             $now = Carbon::now();
 
             $products = Product::where('user_id', $user_id)
-                ->whereBetween('end_date_of_warranty', [$two_month_ago, $now])
+                ->whereBetween('end_date_of_warranty', [$now, $two_month_ago])
                 ->paginate(config('page.paginate_page'));
 
             return response()->json(
