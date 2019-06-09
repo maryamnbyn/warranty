@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers\API\V1;
-
 use App\User;
 use Validator;
 use App\Firebase;
@@ -10,13 +8,11 @@ use App\Events\SMSCreated;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-
 class UserController extends Controller
 {
     private $successStatus = 1;
     private $failedStatus = -1;
     private $successUpdate = 2;
-
 
     public function info()
     {
@@ -52,14 +48,17 @@ class UserController extends Controller
 
         $phone = $request->phone;
         $device = $request->device;
-        $user = User::where('phone', $phone)->first();
-        if (!empty($user)) {
 
+        $user = User::where('phone', $phone)->first();
+
+        if (!empty($user)) {
             $user_id = $user->id;
-            $check_device = Firebase::where('user_id', $user_id)->where('device', $device)->first();
+
+            $check_device = Firebase::where('user_id', $user_id)
+                ->where('device', $device)
+                ->first();
 
             if (!empty($check_device)) {
-
                 event(new SMSCreated($user_id, $device, $phone));
 
                 return response()->json([
@@ -80,6 +79,7 @@ class UserController extends Controller
                 ]);
             }
         }
+
         return Response()->json([
             'code' => $this->failedStatus,
             'message' => 'کاربر با این شماره وجود نداشته است!',
@@ -90,12 +90,10 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'max:15',
-
         ]);
 
         if ($validator->fails()) {
             $validate = collect($validator->errors());
-
             return Response()->json(
                 [
                     'code' => $this->failedStatus,
@@ -116,8 +114,8 @@ class UserController extends Controller
                 'code' => $this->successStatus,
                 'message' => 'تغییر نام انجام شد',
             ]);
-        } else {
 
+        } else {
             $user = User::where('phone', $phone)->first();
 
             if (!empty($user)) {
@@ -126,8 +124,10 @@ class UserController extends Controller
                     'code' => $this->failedStatus,
                     'message' => 'این شماره قبلا ثبت شده است وخطای عدم دسترسی',
                 ]);
+
             } else {
                 $user_id = Auth::user()->id;
+
                 event(new SMSCreated($user_id, $device, $phone));
 
                 return Response()->json([
@@ -136,25 +136,23 @@ class UserController extends Controller
                 ]);
             }
         }
-
     }
 
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
+
         return Response()->json([
             'code' => $this->successStatus,
             'message' => 'کاربر با موفقیت از سیستم خارج شد!'
-
         ]);
-
     }
 
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'max:16',
-            'phone' => 'unique:users|regex:/(09)[0-9]{9}',
+            'phone' => 'unique:users|max:14|regex:/(09)[0-9]{9}',
             'device' => 'required',
         ]);
 
@@ -190,7 +188,6 @@ class UserController extends Controller
             'code' => $this->successStatus,
             'message' => 'کاربر جدید بوده و کد برایش ارسال شد!',
         ]);
-
     }
 
     public function verificationUpdate(Request $request)
@@ -200,12 +197,10 @@ class UserController extends Controller
             'phone' => 'required|regex:/(09)[0-9]{9}',
             'device' => 'required',
             'code' => 'required|max:5',
-
         ]);
 
         if ($validator->fails()) {
             $validate = collect($validator->errors());
-
             return Response()->json(
                 [
                     'code' => $this->failedStatus,
@@ -219,7 +214,9 @@ class UserController extends Controller
         $code = $request->code;
 
         $user_id = Auth::user()->token()->user_id;
+
         $check_device = Firebase::where('user_id', $user_id)->where('device', $device)->first();
+
         $user_code = $check_device['code'];
 
         if ($code == $user_code) {
@@ -240,6 +237,7 @@ class UserController extends Controller
                     'message' => 'تغییرات شماره انجام شد',
                     'data' => $success
                 ]);
+
             } else {
                 $check_device->update([
                     'token' => $success['token']
@@ -257,12 +255,12 @@ class UserController extends Controller
                 ]);
             }
         } else {
+
             return Response()->json([
                 'code' => $this->failedStatus,
                 'message' => 'کد صحیح نمی باشد',
             ]);
         }
-
     }
 
     public function verificationRegister(Request $request)
@@ -275,7 +273,6 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             $validate = collect($validator->errors());
-
             return Response()->json(
                 [
                     'code' => $this->failedStatus,
@@ -286,18 +283,14 @@ class UserController extends Controller
         $phone = $request->phone;
         $code = $request->code;
         $device = $request->device;
-
         $user = User::where('phone', $phone)->first();
 
         if (!empty($user)) {
             $userID = $user->id;
-
             $userFirebase = Firebase::where('user_id', $userID)->where('device', $device)->first();
-
             $userCode = $userFirebase->code;
 
             if ($code == $userCode) {
-
                 $success['token'] = $user->createToken('MyApp')->accessToken;
 
                 $userFirebase->update([
@@ -309,7 +302,6 @@ class UserController extends Controller
                     'message' => 'کاربر کد را به درستی وارد کرده و ورود موفق',
                     'data' => $success,
                 ]);
-
             } elseif ($code !== $userCode)
 
                 return Response()->json([
@@ -317,12 +309,11 @@ class UserController extends Controller
                     'message' => 'کد صحیح نمی باشد',
                 ]);
         } else {
+
             return Response()->json([
                 'code' => $this->failedStatus,
                 'message' => 'این شماره صحبح نمی باشد',
             ]);
         }
     }
-
 }
-
