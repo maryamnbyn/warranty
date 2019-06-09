@@ -144,7 +144,6 @@ class ProductController extends Controller
 
             $carbon = Carbon::now();
             $two_month_ago = $carbon->addMonths(2);
-            dd($two_month_ago);
             $now = Carbon::now();
 
             $products = Product::where('user_id', $user_id)
