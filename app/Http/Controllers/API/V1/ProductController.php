@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use Illuminate\Http\File;
 use Illuminate\Support\Facades\Response;
 use Validator;
 use App\Product;
@@ -18,6 +17,15 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
+        if (Auth::user()->id != $product->user_id) {
+
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => 'عدم دسترسی',
+
+            ]);
+        }
+
         return Response()->json([
             'code' => $this->successStatus,
             'message' => 'نمایش یک محصول',
@@ -32,9 +40,7 @@ class ProductController extends Controller
             'warranty_number' => 'required|unique:products',
             'purchase_date' => 'required',
             'end_date_of_warranty' => 'required',
-            'factor_number' => 'required',
-            'seller_phone' => 'required',
-            'store_address' => 'required',
+
         ]);
 
         if ($validator->fails()) {
@@ -47,8 +53,9 @@ class ProductController extends Controller
         }
 
         $product = Product::create(
-            array_merge($request->except('image'),['user_id' => Auth::user()->id])
+            array_merge($request->except('image'), ['user_id' => Auth::user()->id])
         );
+
         $image = $request->file('image');
         $product->storeProduct($image);
 
@@ -72,9 +79,9 @@ class ProductController extends Controller
                     "code" => $this->successStatus,
                     "message" => "نمایش همه محصولات",
                     "data" =>
-                        collect($products->items())->map(function ($products) {
+                        collect($products->items())->map(function ($product) {
 
-                            return collect($products)->except([
+                            return collect($product)->except([
                                     'created_at',
                                     'updated_at'
                                 ]
@@ -83,8 +90,11 @@ class ProductController extends Controller
                     'has_more' => $products->hasMorePages()
                 ]
             );
-        } elseif ($status == 'expired') {
+
+        }
+        elseif ($status == 'expired') {
             $now = Carbon::now();
+
             $products = Product::where('user_id', $user_id)
                 ->where('end_date_of_warranty', '<', $now)
                 ->paginate(config('page.paginate_page'));
@@ -93,9 +103,9 @@ class ProductController extends Controller
                 [
                     "code" => $this->successStatus,
                     "message" => "نمایش همه محصولات منقضی شده",
-                    "data" => collect($products->items())->map(function ($products) {
+                    "data" => $products->map(function ($product) {
 
-                        return collect($products)->except([
+                        return collect($product)->except([
                                 'created_at',
                                 'updated_at'
                             ]
@@ -104,8 +114,11 @@ class ProductController extends Controller
                     'has_more' => $products->hasMorePages()
                 ]
             );
-        } elseif ($status == 'valid') {
+
+        }
+        elseif ($status == 'valid') {
             $now = Carbon::now();
+
             $products = Product::where('user_id', $user_id)
                 ->where('end_date_of_warranty', '>', $now)
                 ->paginate(config('page.paginate_page'));
@@ -114,8 +127,9 @@ class ProductController extends Controller
                 [
                     "code" => $this->successStatus,
                     "message" => "نمایش همه محصولات دارای گارانتی",
-                    "data" => collect($products->items())->map(function ($products) {
-                        return collect($products)->except([
+                    "data" => $products->map(function ($product) {
+
+                        return collect($product)->except([
                                 'created_at',
                                 'updated_at'
                             ]
@@ -124,7 +138,10 @@ class ProductController extends Controller
                     'has_more' => $products->hasMorePages()
                 ]
             );
-        } elseif ($status == 'expiring') {
+
+        }
+        elseif ($status == 'expiring') {
+
             $carbon = Carbon::now();
             $two_month_ago = $carbon->subMonth(2);
             $now = Carbon::now();
@@ -137,8 +154,9 @@ class ProductController extends Controller
                 [
                     "code" => $this->successStatus,
                     "message" => "نمایش همه محصولات در حال انقضا",
-                    "data" => collect($products->items())->map(function ($products) {
-                        return collect($products)->except([
+                    "data" => $products->map(function ($product) {
+
+                        return collect($product)->except([
                                 'created_at',
                                 'updated_at'
                             ]
@@ -152,31 +170,23 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        if ($product->image != null) {
+        if ($product != null) {
             $product->deleteProduct();
             return Response()->json([
                 'code' => $this->successStatus,
                 'message' => 'محصول با موفقیت حذف شد!',
             ]);
         }
-            $product->delete();
-            return Response()->json([
-                'code' => $this->successStatus,
-                'message' => 'محصول با موفقیت حذف شد!',
-            ]);
-        }
+    }
 
     public function update(Request $request, Product $product)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'warranty_number' => 'required|unique:products',
+            'warranty_number' => 'required',
             'purchase_date' => 'required',
-            'image' => 'required',
             'end_date_of_warranty' => 'required',
-            'factor_number' => 'required',
-            'seller_phone' => 'required',
-            'store_address' => 'required',
+
         ]);
 
         if ($validator->fails()) {
@@ -189,30 +199,44 @@ class ProductController extends Controller
                 ]);
         }
 
-        $product->update(
-            $request->except('image','user_id'));
+        if (Auth::user()->id == $product->user_id) {
+            if(!empty($request->all())){
+                $product->update(
+                    $request->except('image'));
 
-        $image = $request->file('image');
-        $product->updateProduct($image);
+                $image = $request->file('image');
+                $product->updateProduct($image);
 
-        return Response()->json([
-            'code' => $this->successStatus,
-            'message' => 'محصول با موفقیت تغییر کرد!',
-        ]);
+            }
+
+            return Response()->json([
+                'code' => $this->successStatus,
+                'message' => 'محصول با موفقیت تغییر کرد!',
+            ]);
+        }
+        else {
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => 'خطای عدم دسترسی',
+            ]);
+        }
     }
 
     public function Downloadlink($filename)
     {
-        $file_path = 'picture/upload/'.$filename;
-        if (file_exists($file_path))
-        {
+        $file_path = 'picture/upload/' . $filename;
+
+        if (file_exists($file_path)) {
+
             return Response::file($file_path);
-        }
-        else
-        {
-            exit('چنین عکسی موجود نمی باشد!');
+
+        } else {
+
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => 'چنین عکسی موجود نمی باشد',
+            ]);
         }
     }
-
 
 }
