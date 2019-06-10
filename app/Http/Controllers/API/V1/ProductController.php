@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use Illuminate\Support\Facades\Response;
 use Validator;
 use App\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Response;
 
 class ProductController extends Controller
 {
@@ -180,6 +180,24 @@ class ProductController extends Controller
         }
     }
 
+    public function Downloadlink($filename)
+    {
+        $file_path = 'picture/upload/' . $filename;
+
+        if (file_exists($file_path)) {
+
+            return Response::file($file_path);
+
+        }
+        else {
+
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => 'چنین عکسی موجود نمی باشد',
+            ]);
+        }
+    }
+
     public function update(Request $request, Product $product)
     {
         $validator = Validator::make($request->all(), [
@@ -221,24 +239,6 @@ class ProductController extends Controller
             return Response()->json([
                 'code' => $this->failedStatus,
                 'message' => 'خطای عدم دسترسی',
-            ]);
-        }
-    }
-
-    public function Downloadlink($filename)
-    {
-        $file_path = 'picture/upload/' . $filename;
-
-        if (file_exists($file_path)) {
-
-            return Response::file($file_path);
-
-        }
-        else {
-
-            return Response()->json([
-                'code' => $this->failedStatus,
-                'message' => 'چنین عکسی موجود نمی باشد',
             ]);
         }
     }
