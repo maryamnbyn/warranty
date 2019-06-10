@@ -91,7 +91,8 @@ class ProductController extends Controller
                 ]
             );
 
-        } elseif ($status == 'expired') {
+        }
+        elseif ($status == 'expired') {
             $now = Carbon::now();
 
             $products = Product::where('user_id', $user_id)
@@ -114,7 +115,8 @@ class ProductController extends Controller
                 ]
             );
 
-        } elseif ($status == 'valid') {
+        }
+        elseif ($status == 'valid') {
             $now = Carbon::now();
 
             $products = Product::where('user_id', $user_id)
@@ -137,7 +139,8 @@ class ProductController extends Controller
                 ]
             );
 
-        } elseif ($status == 'expiring') {
+        }
+        elseif ($status == 'expiring') {
 
             $carbon = Carbon::now();
             $two_month_later = $carbon->addMonths(2);
@@ -212,7 +215,9 @@ class ProductController extends Controller
                 'code' => $this->successStatus,
                 'message' => 'محصول با موفقیت تغییر کرد!',
             ]);
-        } else {
+        }
+        else {
+
             return Response()->json([
                 'code' => $this->failedStatus,
                 'message' => 'خطای عدم دسترسی',
@@ -228,7 +233,8 @@ class ProductController extends Controller
 
             return Response::file($file_path);
 
-        } else {
+        }
+        else {
 
             return Response()->json([
                 'code' => $this->failedStatus,
