@@ -94,21 +94,6 @@ class UserController extends Controller
 
     public function update(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'phone' => 'required|regex:/(09)[0-9]{9}/',
-
-        ]);
-
-        if ($validator->fails()) {
-            $validate = collect($validator->errors());
-
-            return Response()->json(
-                [
-                    'code' => $this->failedStatus,
-                    'message' => $validate->collapse()[0]
-                ]);
-        }
-
         $name = $request->name;
         $phone = $request->phone;
         $device = $request->device;
