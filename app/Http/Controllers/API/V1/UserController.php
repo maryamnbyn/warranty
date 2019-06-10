@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers\API\V1;
+
 use App\User;
 use Validator;
 use App\Firebase;
@@ -8,6 +10,7 @@ use App\Events\SMSCreated;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+
 class UserController extends Controller
 {
     private $successStatus = 1;
@@ -269,6 +272,7 @@ class UserController extends Controller
             ]);
         }
     }
+
     public function verificationRegister(Request $request)
     {
         $validator = Validator::make($request->all(), [
