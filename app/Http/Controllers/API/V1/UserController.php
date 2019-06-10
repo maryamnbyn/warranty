@@ -95,7 +95,8 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'max:15',
+            'phone' => 'required|regex:/(09)[0-9]{9}/',
+
         ]);
 
         if ($validator->fails()) {
@@ -158,7 +159,6 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'max:16',
             'phone' => 'unique:users|max:14||regex:/(09)[0-9]{9}/',
             'device' => 'required',
         ]);
@@ -200,7 +200,6 @@ class UserController extends Controller
     public function verificationUpdate(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'max:12',
             'phone' => 'required|regex:/(09)[0-9]{9}/',
             'device' => 'required',
             'code' => 'required|max:5',
