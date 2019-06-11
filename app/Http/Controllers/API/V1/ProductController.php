@@ -56,8 +56,7 @@ class ProductController extends Controller
             array_merge($request->except('image'), ['user_id' => Auth::user()->id])
         );
 
-        $image = $request->file('image');
-        $product->storeProduct($image);
+        $product->storeProduct($request->file('image'));
 
         return Response()->json([
             'code' => $this->successStatus,
@@ -224,8 +223,7 @@ class ProductController extends Controller
                 $product->update(
                     $request->except('image'));
 
-                $image = $request->file('image');
-                $product->updateProduct($image);
+                $product->updateProduct($request->file('image'));
 
             }
 
