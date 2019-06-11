@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Firebase extends Model
+class Devices extends Model
 {
     protected $fillable = [
         'user_id', 'token','device','code'
@@ -18,6 +18,7 @@ class Firebase extends Model
         }
 
         $random_number = rand(pow(10, $digit - 1), pow(10, $digit) - 1);
+
         $this->update([
             'code' => $random_number
         ]);

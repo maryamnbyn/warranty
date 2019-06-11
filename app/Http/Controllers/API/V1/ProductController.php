@@ -76,8 +76,7 @@ class ProductController extends Controller
             return response()->json([
                     "code" => $this->successStatus,
                     "message" => "نمایش همه محصولات",
-                    "data" =>
-                        collect($products->items())->map(function ($product) {
+                    "data" => $products->map(function ($product) {
 
                             return collect($product)->except([
                                     'created_at',
@@ -112,7 +111,6 @@ class ProductController extends Controller
                     'has_more' => $products->hasMorePages()
                 ]
             );
-
         }
         elseif ($status == 'valid') {
             $now = Carbon::now();

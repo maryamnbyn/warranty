@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Devices;
 use App\User;
 use Validator;
-use App\Firebase;
 use http\Env\Response;
 use App\Events\SMSCreated;
 use Illuminate\Http\Request;
@@ -56,11 +56,11 @@ class UserController extends Controller
             ]);
         }
 
-        $device = Firebase::where('user_id', $user->id)
+        $device = Devices::where('user_id', $user->id)
             ->where('device', $request->device)
             ->first();
 
-        if ($device instanceof Firebase) {
+        if ($device instanceof Devices) {
 
             $code = $device->makeVerifyCode();
 
@@ -74,7 +74,7 @@ class UserController extends Controller
             ]);
 
         } else {
-            $device = Firebase::create([
+            $device = Devices::create([
                 'user_id' => $user->id,
                 'device' => $request->device,
             ]);
@@ -133,7 +133,7 @@ class UserController extends Controller
 
                 $user_id = Auth::user()->id;
 
-                $device = Firebase::where('user_id', $user_id)
+                $device = Devices::where('user_id', $user_id)
                     ->where('device', $request->device)
                     ->first();
 
@@ -181,12 +181,12 @@ class UserController extends Controller
             'phone' => $request->phone,
         ]);
 
-        Firebase::create([
+        Devices::create([
             'user_id' => $user->id,
             'device' => $request->device,
         ]);
 
-        $device = Firebase::where('user_id', $user->id)
+        $device = Devices::where('user_id', $user->id)
             ->where('device', $request->device)
             ->first();
 
@@ -220,13 +220,13 @@ class UserController extends Controller
 
         $user = Auth::user();
 
-        $device = Firebase::where('user_id', $user->id)
+        $device = Devices::where('user_id', $user->id)
             ->where('device', $request->device)
             ->where('code', $request->code)
             ->first();
 
 
-        if ($device instanceof Firebase) {
+        if ($device instanceof Devices) {
 
             $token = Auth::user()->createToken('MyApp')->accessToken;
 
@@ -275,12 +275,12 @@ class UserController extends Controller
 
         if ($user instanceof User) {
 
-            $userFirebase = Firebase::where('user_id', $user->id)
+            $userFirebase = Devices::where('user_id', $user->id)
                 ->where('device', $request->device)
                 ->where('code', $request->code)
                 ->first();
 
-            if ($userFirebase instanceof Firebase) {
+            if ($userFirebase instanceof Devices) {
                 $success['token'] = $user->createToken('MyApp')->accessToken;
 
                 $userFirebase->update([

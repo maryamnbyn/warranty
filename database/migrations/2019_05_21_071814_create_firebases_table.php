@@ -13,7 +13,7 @@ class CreateFirebasesTable extends Migration
      */
     public function up()
     {
-        Schema::create('firebases', function (Blueprint $table) {
+        Schema::create('devices', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('user_id')->nullable();
             $table->string('device')->nullable();
