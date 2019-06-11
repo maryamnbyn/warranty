@@ -13,14 +13,25 @@ use Illuminate\Http\Request;
 |
 */
 
-//User Route token
+
 
 Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ,'middleware' => 'auth:api'], function () {
+
+    //User Route token
 
     Route::post('/user/edit', 'UserController@update');
     Route::post('/user/info', 'UserController@info');
     Route::post('/update/verify', 'UserController@verificationUpdate');
     Route::post('/logout', 'UserController@logout');
+
+
+    //product Route token
+
+    Route::get('/products/{product}', 'ProductController@show');
+    Route::post('/products', 'ProductController@store');
+    Route::get('/products', 'ProductController@index');
+    Route::post('/product/update/{product}', 'ProductController@update');
+    Route::post('/product/destroy/{product}', 'ProductController@destroy');
 });
 //login and register route
 
@@ -29,22 +40,10 @@ Route::group(['namespace' => 'API\V1', 'prefix' => 'v1'], function () {
     Route::post('/register/verify', 'UserController@verificationRegister');
     Route::post('/register', 'UserController@register');
     Route::post('/login', 'UserController@login');
-});
 
-//product Route token
-Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ,'middleware' => 'auth:api'], function () {
-    Route::get('/products/{product}', 'ProductController@show');
-    Route::post('/products', 'ProductController@store');
-    Route::get('/products', 'ProductController@index');
-    Route::post('/product/update/{product}', 'ProductController@update');
-    Route::post('/product/destroy/{product}', 'ProductController@destroy');
-
-});
-
-//download link for pic
-Route::group(['namespace' => 'API\V1', 'prefix' => 'v1' ], function () {
 
     Route::get('download/{filename}', 'ProductController@Downloadlink');
-
 });
+
+
 

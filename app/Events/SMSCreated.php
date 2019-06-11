@@ -14,19 +14,17 @@ class SMSCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $user_id;
-    public $device;
     public $phone;
+    public $text;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user_id,$device,$phone)
+    public function __construct($phone,$text)
     {
-        $this->user_id = $user_id;
-        $this->device = $device;
         $this->phone = $phone;
+        $this->text = $text;
     }
 
     /**

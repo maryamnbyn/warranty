@@ -44,11 +44,10 @@ class ProductController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $validate = collect($validator->errors());
 
             return Response()->json([
                 'code' => $this->failedStatus,
-                'message' => $validate->collapse()[0]
+                'message' => $validator->errors()->first()
             ]);
         }
 
@@ -183,10 +182,9 @@ class ProductController extends Controller
     {
         $file_path = 'picture/upload/' . $filename;
 
-        if (file_exists($file_path)) {
-
+        if (file_exists($file_path))
+        {
             return Response::file($file_path);
-
         }
         else {
 
@@ -208,13 +206,11 @@ class ProductController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $validate = collect($validator->errors());
 
-            return Response()->json(
-                [
-                    'code' => $this->failedStatus,
-                    'message' => $validate->collapse()[0]
-                ]);
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => $validator->errors()->first()
+            ]);
         }
 
         if (Auth::user()->id == $product->user_id) {

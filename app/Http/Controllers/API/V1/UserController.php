@@ -40,58 +40,73 @@ class UserController extends Controller
 
         if ($validator->fails()) {
 
-            $validate = collect($validator->errors());
-
-            return Response()->json(
-                [
-                    'code' => $this->failedStatus,
-                    'message' => $validate->collapse()[0]
-                ]);
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => $validator->errors()->first()
+            ]);
         }
 
         $user = User::where('phone', $request->phone)->first();
 
-        if (!empty($user)) {
+        if (!$user instanceof User) {
 
-            $check_device = Firebase::where('user_id', $user->id)
-                ->where('device', $request->device)
-                ->first();
-
-            if (!empty($check_device)) {
-
-                event(new SMSCreated($user->id, $request->device, $request->phone));
-
-                return response()->json([
-                    'code' => $this->successStatus,
-                    'message' => 'کاربر از قبل وجود داشته و کد جدید برایش ارسال شد!',
-                ]);
-
-            }
-            else {
-
-                Firebase::create([
-                    'user_id' => $user->id,
-                    'device' => $request->device,
-                ]);
-
-                event(new SMSCreated($user->id, $request->device, $request->phone));
-
-                return Response()->json([
-                    'code' => $this->successStatus,
-                    'message' => 'کاربر با این وسیله ثبت و کد ارسال شد!',
-                ]);
-            }
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => 'کاربر با این شماره وجود نداشته است!',
+            ]);
         }
 
-        return Response()->json([
-            'code' => $this->failedStatus,
-            'message' => 'کاربر با این شماره وجود نداشته است!',
-        ]);
+        $device = Firebase::where('user_id', $user->id)
+            ->where('device', $request->device)
+            ->first();
+
+        if ($device instanceof Firebase) {
+
+            $code = $device->makeVerifyCode();
+
+            $text = __('messages.login', ['code' => $code]);
+
+            event(new SMSCreated($request->phone, $text));
+
+            return response()->json([
+                'code' => $this->successStatus,
+                'message' => 'کاربر از قبل وجود داشته و کد جدید برایش ارسال شد!',
+            ]);
+
+        } else {
+            $device = Firebase::create([
+                'user_id' => $user->id,
+                'device' => $request->device,
+            ]);
+
+            $code = $device->makeVerifyCode();
+
+            $text = __('messages.login', ['code' => $code]);
+
+            event(new SMSCreated($request->phone, $text));
+
+            return Response()->json([
+                'code' => $this->successStatus,
+                'message' => 'کاربر با این وسیله ثبت و کد ارسال شد!',
+            ]);
+        }
     }
 
     public function update(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => $validator->errors()->first()
+            ]);
+        }
         if (empty($request->phone)) {
+
             Auth::user()->update([
                 'name' => $request->name
             ]);
@@ -101,11 +116,10 @@ class UserController extends Controller
                 'message' => 'تغییر نام انجام شد',
             ]);
 
-        }
-        else {
+        } else {
             $user = User::where('phone', $request->phone)->first();
 
-            if (!empty($user)) {
+            if ($user instanceof User) {
 
                 return Response()->json([
                     'code' => $this->failedStatus,
@@ -113,8 +127,21 @@ class UserController extends Controller
                 ]);
 
             } else {
+                Auth::user()->update([
+                    'name' => $request->name
+                ]);
 
-                event(new SMSCreated(Auth::user()->id, $request->device, $request->phone));
+                $user_id = Auth::user()->id;
+
+                $device = Firebase::where('user_id', $user_id)
+                    ->where('device', $request->device)
+                    ->first();
+
+                $code = $device->makeVerifyCode();
+
+                $text = __('messages.update', ['code' => $code]);
+
+                event(new SMSCreated($request->phone, $text));
 
                 return Response()->json([
                     'code' => $this->successUpdate,
@@ -142,13 +169,11 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            $validate = collect($validator->errors());
 
-            return Response()->json(
-                [
-                    'code' => $this->failedStatus,
-                    'message' => $validate->collapse()[0]
-                ]);
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => $validator->errors()->first()
+            ]);
         }
 
         $user = User::create([
@@ -156,13 +181,20 @@ class UserController extends Controller
             'phone' => $request->phone,
         ]);
 
-
         Firebase::create([
             'user_id' => $user->id,
             'device' => $request->device,
         ]);
 
-        event(new SMSCreated($user->id, $request->device, $request->phone));
+        $device = Firebase::where('user_id', $user->id)
+            ->where('device', $request->device)
+            ->first();
+
+        $code = $device->makeVerifyCode();
+
+        $text = __('messages.register', ['user' => $user->name, 'code' => $code]);
+
+        event(new SMSCreated($request->phone, $text));
 
         return response()->json([
             'code' => $this->successStatus,
@@ -173,67 +205,48 @@ class UserController extends Controller
     public function verificationUpdate(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'phone' => 'required|regex:/(09)[0-9]{9}/',
+            'phone' => 'required|unique:users|regex:/(09)[0-9]{9}/',
             'device' => 'required',
             'code' => 'required|max:5',
         ]);
 
         if ($validator->fails()) {
-            $validate = collect($validator->errors());
 
-            return Response()->json(
-                [
-                    'code' => $this->failedStatus,
-                    'message' => $validate->collapse()[0]
-                ]);
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => $validator->errors()->first()
+            ]);
         }
 
-        $user_id = Auth::user()->token()->user_id;
+        $user = Auth::user();
 
-        $check_device = Firebase::where('user_id', $user_id)
+        $device = Firebase::where('user_id', $user->id)
             ->where('device', $request->device)
+            ->where('code', $request->code)
             ->first();
 
-        $user_code = $check_device['code'];
 
-        if ($request->code == $user_code) {
-            $success['token'] = Auth::user()->createToken('MyApp')->accessToken;
+        if ($device instanceof Firebase) {
 
-            if (empty($request->name)) {
-                $check_device->update([
-                    'token' => $success['token']
-                ]);
+            $token = Auth::user()->createToken('MyApp')->accessToken;
 
-                Auth::user()->update([
-                    'phone' => $request->phone
-                ]);
+            $device->update([
+                'token' => $token
+            ]);
 
-                return Response()->json([
-                    'code' => $this->successStatus,
-                    'message' => 'تغییرات شماره انجام شد',
-                    'data' => $success
-                ]);
+            $user->update([
+                'phone' => $request->phone
+            ]);
 
-            }
-            else {
-                $check_device->update([
-                    'token' => $success['token']
-                ]);
+            return Response()->json([
+                'code' => $this->successStatus,
+                'message' => 'تغییرات شماره انجام شد',
+                'data' => [
+                    'token' => $token
+                ]
+            ]);
 
-                Auth::user()->update([
-                    'name' => $request->name,
-                    'phone' => $request->phone
-                ]);
-
-                return Response()->json([
-                    'code' => $this->successStatus,
-                    'message' => 'تغییرات نام و شماره انجام شد',
-                    'data' => $success
-                ]);
-            }
-
-        }
-        else {
+        } else {
 
             return Response()->json([
                 'code' => $this->failedStatus,
@@ -252,27 +265,22 @@ class UserController extends Controller
 
         if ($validator->fails()) {
 
-            $validate = collect($validator->errors());
-
-            return Response()->json(
-                [
-                    'code' => $this->failedStatus,
-                    'message' => $validate->collapse()[0]
-                ]);
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => $validator->errors()->first()
+            ]);
         }
 
         $user = User::where('phone', $request->phone)->first();
 
-        if (!empty($user)) {
-            $userID = $user->id;
+        if ($user instanceof User) {
 
-            $userFirebase = Firebase::where('user_id', $userID)
+            $userFirebase = Firebase::where('user_id', $user->id)
                 ->where('device', $request->device)
+                ->where('code', $request->code)
                 ->first();
 
-            $userCode = $userFirebase->code;
-
-            if ($request->code == $userCode) {
+            if ($userFirebase instanceof Firebase) {
                 $success['token'] = $user->createToken('MyApp')->accessToken;
 
                 $userFirebase->update([
@@ -285,14 +293,13 @@ class UserController extends Controller
                     'data' => $success,
                 ]);
 
-            } elseif ($request->code !== $userCode)
+            } else
 
                 return Response()->json([
                     'code' => $this->failedStatus,
                     'message' => 'کد صحیح نمی باشد',
                 ]);
-        }
-        else {
+        } else {
 
             return Response()->json([
                 'code' => $this->failedStatus,
