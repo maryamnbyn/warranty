@@ -52,21 +52,17 @@ class User extends Authenticatable
 
             if (! empty($device)) {
 
-                // Update Existed Device
                 $device->update(['code' => $random_number]);
 
             } else {
-                //Create new Device
+
                 $device = ($this->devices())->create(['device' => $UUID , 'code' =>$random_number ]);
             }
 
-        // Create SMS Message
        $text =  __('messages.'. $action , ['user' => $this->name, 'code' => $device->code]);
 
-       // Send Verification SMS
         event(new SMSCreated($this->phone, $text));
     }
-
 
     public function sendSMSUpdate($action , $UUID ,$phone , $digit = null)
     {
@@ -78,18 +74,15 @@ class User extends Authenticatable
 
         if (! empty($device)) {
 
-            // Update Existed Device
             $device->update(['code' => $random_number]);
 
         } else {
-            //Create new Device
+
             $device = ($this->devices())->create(['device' => $UUID , 'code' =>$random_number ]);
         }
 
-        // Create SMS Message
         $text =  __('messages.'. $action , ['user' => $this->name, 'code' => $device->code]);
 
-        // Send Verification SMS
         event(new SMSCreated($phone, $text));
     }
 

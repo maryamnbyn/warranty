@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Device;
 use App\User;
+use App\User_Device;
 use Validator;
 use http\Env\Response;
 use App\Events\SMSCreated;
@@ -168,8 +169,7 @@ class UserController extends Controller
 
         $user = Auth::user();
 
-        $device = Device::where('user_id', $user->id)
-            ->where('device', $request->device)
+        $device = $user->devices()->where('device', $request->device)
             ->where('code', $request->code)
             ->first();
 
@@ -225,7 +225,7 @@ class UserController extends Controller
 
         if ($user instanceof User) {
 
-            $userFirebase = Device::where('user_id', $user->id)
+            $userFirebase = $user->devices()
                 ->where('device', $request->device)
                 ->where('code', $request->code)
                 ->first();
