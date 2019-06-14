@@ -10,4 +10,8 @@ class Device extends Model
         'user_id', 'token','device','code'
     ];
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class ,'user_device');
+    }
 }

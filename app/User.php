@@ -39,7 +39,7 @@ class User extends Authenticatable
 
     public function devices()
     {
-        return $this->hasMany(Device::class);
+        return $this->belongsToMany(Device::class , 'user_device' );
     }
 
     public function sendSMS($action ,$UUID = null, $digit = null)

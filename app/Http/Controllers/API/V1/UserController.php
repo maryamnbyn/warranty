@@ -62,6 +62,7 @@ class UserController extends Controller
             'code' => $this->successStatus,
             'message' => 'کد جدید برایش ارسال شد!',
         ]);
+
     }
 
     public function update(Request $request)
