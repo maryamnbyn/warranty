@@ -1,5 +1,5 @@
 <?php
+
 return [
-    'digit' => 5
+    'digit' => env('SMS_VERIFY_CODE_DIGIT',5)
 ];
-?>

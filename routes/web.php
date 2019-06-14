@@ -13,3 +13,6 @@
 
 Auth::routes();
 
+Route::get('/test' , function(){
+    return view('panel.dashboard');
+});

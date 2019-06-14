@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\SMSCreated;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
@@ -32,13 +33,64 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'date
+         time',
     ];
 
     public function devices()
     {
-        $this->hasMany(Firebase::class);
+        return $this->hasMany(Device::class);
     }
 
+    public function sendSMS($action ,$UUID = null, $digit = null)
+    {
+        if (is_null($digit)) $digit = config('verify.digit');
+
+        $random_number = rand(pow(10, $digit - 1), pow(10, $digit) - 1);
+
+        $device =  $this->devices()->where('device', $UUID)->first();
+
+            if (! empty($device)) {
+
+                // Update Existed Device
+                $device->update(['code' => $random_number]);
+
+            } else {
+                //Create new Device
+                $device = ($this->devices())->create(['device' => $UUID , 'code' =>$random_number ]);
+            }
+
+        // Create SMS Message
+       $text =  __('messages.'. $action , ['user' => $this->name, 'code' => $device->code]);
+
+       // Send Verification SMS
+        event(new SMSCreated($this->phone, $text));
+    }
+
+
+    public function sendSMSUpdate($action , $UUID ,$phone , $digit = null)
+    {
+        if (is_null($digit)) $digit = config('verify.digit');
+
+        $random_number = rand(pow(10, $digit - 1), pow(10, $digit) - 1);
+
+        $device =  $this->devices()->where('device', $UUID)->first();
+
+        if (! empty($device)) {
+
+            // Update Existed Device
+            $device->update(['code' => $random_number]);
+
+        } else {
+            //Create new Device
+            $device = ($this->devices())->create(['device' => $UUID , 'code' =>$random_number ]);
+        }
+
+        // Create SMS Message
+        $text =  __('messages.'. $action , ['user' => $this->name, 'code' => $device->code]);
+
+        // Send Verification SMS
+        event(new SMSCreated($phone, $text));
+    }
 
 }

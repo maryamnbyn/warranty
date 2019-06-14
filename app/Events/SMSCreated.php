@@ -16,6 +16,7 @@ class SMSCreated
 
     public $phone;
     public $text;
+
     /**
      * Create a new event instance.
      *

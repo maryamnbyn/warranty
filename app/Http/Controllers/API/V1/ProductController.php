@@ -65,103 +65,50 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $status = $request->status;
+        $validator = Validator::make($request->all(),[
+            'status' => 'required|in:all,expired,valid,expiring'
+        ]);
 
-        $user_id = Auth::user()->token()->user_id;
-
-        $products = Product::where('user_id', $user_id)->paginate(config('page.paginate_page'));
-
-        if ($status == 'all') {
-
-            return response()->json([
-                    "code" => $this->successStatus,
-                    "message" => "نمایش همه محصولات",
-                    "data" => $products->map(function ($product) {
-
-                            return collect($product)->except([
-                                    'created_at',
-                                    'updated_at'
-                                ]
-                            );
-                        }),
-                    'has_more' => $products->hasMorePages()
-                ]
-            );
-
+        if ($validator->fails()) {
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => $validator->errors()->first()
+            ]);
         }
-        elseif ($status == 'expired') {
-            $now = Carbon::now();
 
-            $products = Product::where('user_id', $user_id)
-                ->where('end_date_of_warranty', '<', $now)
-                ->paginate(config('page.paginate_page'));
+        $user = Auth::user();
 
-            return response()->json(
-                [
-                    "code" => $this->successStatus,
-                    "message" => "نمایش همه محصولات منقضی شده",
-                    "data" => $products->map(function ($product) {
+        $products = Product::where('user_id', $user->id);
 
-                        return collect($product)->except([
+        switch ($request->status)
+        {
+            case    'expired':
+                $products->expired();
+                break;
+            case    'valid':
+                $products->valid();
+                break;
+            case    'expiring':
+                $products->expiring();
+                break;
+        }
+
+        return response()->json([
+                "code" => $this->successStatus,
+                "message" => "نمایش همه محصولات",
+                "data" => $products->paginate(config('page.paginate_page'))
+                    ->map(function ($product) {
+
+                        return $product->except([
                                 'created_at',
                                 'updated_at'
                             ]
                         );
                     }),
-                    'has_more' => $products->hasMorePages()
-                ]
-            );
-        }
-        elseif ($status == 'valid') {
-            $now = Carbon::now();
+                'has_more' => $products->hasMorePages()
+            ]
+        );
 
-            $products = Product::where('user_id', $user_id)
-                ->where('end_date_of_warranty', '>', $now)
-                ->paginate(config('page.paginate_page'));
-
-            return response()->json(
-                [
-                    "code" => $this->successStatus,
-                    "message" => "نمایش همه محصولات دارای گارانتی",
-                    "data" => $products->map(function ($product) {
-
-                        return collect($product)->except([
-                                'created_at',
-                                'updated_at'
-                            ]
-                        );
-                    }),
-                    'has_more' => $products->hasMorePages()
-                ]
-            );
-
-        }
-        elseif ($status == 'expiring') {
-
-            $carbon = Carbon::now();
-            $two_month_later = $carbon->addMonths(2);
-            $now = Carbon::now();
-
-            $products = Product::where('user_id', $user_id)
-                ->whereBetween('end_date_of_warranty', [$now, $two_month_later])
-                ->paginate(config('page.paginate_page'));
-
-            return response()->json(
-                [
-                    "code" => $this->successStatus,
-                    "message" => "نمایش همه محصولات در حال انقضا",
-                    "data" => $products->map(function ($product) {
-
-                        return collect($product)->except([
-                                'created_at',
-                                'updated_at'
-                            ]
-                        );
-                    }),
-                    'has_more' => $products->hasMorePages()
-                ]
-            );
-        }
     }
 
     public function destroy(Product $product)

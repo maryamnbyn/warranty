@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Devices;
+use App\Device;
 use App\User;
 use Validator;
 use http\Env\Response;
@@ -35,7 +35,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'phone' => 'required|regex:/(09)[0-9]{9}/',
-            'device' => 'required'
+            'device' => 'required|unique:devices'
         ]);
 
         if ($validator->fails()) {
@@ -56,40 +56,12 @@ class UserController extends Controller
             ]);
         }
 
-        $device = Devices::where('user_id', $user->id)
-            ->where('device', $request->device)
-            ->first();
+        $user->sendSMS('login', $request->device );
 
-        if ($device instanceof Devices) {
-
-            $code = $device->makeVerifyCode();
-
-            $text = __('messages.login', ['code' => $code]);
-
-            event(new SMSCreated($request->phone, $text));
-
-            return response()->json([
-                'code' => $this->successStatus,
-                'message' => 'کاربر از قبل وجود داشته و کد جدید برایش ارسال شد!',
-            ]);
-
-        } else {
-            $device = Devices::create([
-                'user_id' => $user->id,
-                'device' => $request->device,
-            ]);
-
-            $code = $device->makeVerifyCode();
-
-            $text = __('messages.login', ['code' => $code]);
-
-            event(new SMSCreated($request->phone, $text));
-
-            return Response()->json([
-                'code' => $this->successStatus,
-                'message' => 'کاربر با این وسیله ثبت و کد ارسال شد!',
-            ]);
-        }
+        return response()->json([
+            'code' => $this->successStatus,
+            'message' => 'کد جدید برایش ارسال شد!',
+        ]);
     }
 
     public function update(Request $request)
@@ -105,50 +77,38 @@ class UserController extends Controller
                 'message' => $validator->errors()->first()
             ]);
         }
+        $usr = Auth::user();
+
+        $usr->name = $request->name;
+
         if (empty($request->phone)) {
 
-            Auth::user()->update([
-                'name' => $request->name
-            ]);
+            $usr->save();
 
             return Response()->json([
                 'code' => $this->successStatus,
                 'message' => 'تغییر نام انجام شد',
             ]);
-
-        } else {
-            $user = User::where('phone', $request->phone)->first();
-
-            if ($user instanceof User) {
-
-                return Response()->json([
-                    'code' => $this->failedStatus,
-                    'message' => 'این شماره قبلا ثبت شده است وخطای عدم دسترسی',
-                ]);
-
-            } else {
-                Auth::user()->update([
-                    'name' => $request->name
-                ]);
-
-                $user_id = Auth::user()->id;
-
-                $device = Devices::where('user_id', $user_id)
-                    ->where('device', $request->device)
-                    ->first();
-
-                $code = $device->makeVerifyCode();
-
-                $text = __('messages.update', ['code' => $code]);
-
-                event(new SMSCreated($request->phone, $text));
-
-                return Response()->json([
-                    'code' => $this->successUpdate,
-                    'message' => 'کد برای شما ارسال شد',
-                ]);
-            }
         }
+
+        $user = User::where('phone', $request->phone)->first();
+
+        if ($user instanceof User) {
+
+            return Response()->json([
+                'code' => $this->failedStatus,
+                'message' => 'این شماره قبلا ثبت شده است وخطای عدم دسترسی',
+            ]);
+        }
+
+        $old_user = User::where('phone' ,$usr->phone )->first();
+
+        $old_user->sendSMSUpdate('update' , $request->device , $request->phone);
+
+        return Response()->json([
+            'code' => $this->successUpdate,
+            'message' => 'کد برای شما ارسال شد',
+        ]);
     }
 
     public function logout(Request $request)
@@ -181,20 +141,7 @@ class UserController extends Controller
             'phone' => $request->phone,
         ]);
 
-        Devices::create([
-            'user_id' => $user->id,
-            'device' => $request->device,
-        ]);
-
-        $device = Devices::where('user_id', $user->id)
-            ->where('device', $request->device)
-            ->first();
-
-        $code = $device->makeVerifyCode();
-
-        $text = __('messages.register', ['user' => $user->name, 'code' => $code]);
-
-        event(new SMSCreated($request->phone, $text));
+        $user->sendSMS('register',$request->device);
 
         return response()->json([
             'code' => $this->successStatus,
@@ -220,13 +167,15 @@ class UserController extends Controller
 
         $user = Auth::user();
 
-        $device = Devices::where('user_id', $user->id)
+        $device = Device::where('user_id', $user->id)
             ->where('device', $request->device)
             ->where('code', $request->code)
             ->first();
 
 
-        if ($device instanceof Devices) {
+        if ($device instanceof Device) {
+
+            $request->user()->token()->revoke();
 
             $token = Auth::user()->createToken('MyApp')->accessToken;
 
@@ -275,22 +224,23 @@ class UserController extends Controller
 
         if ($user instanceof User) {
 
-            $userFirebase = Devices::where('user_id', $user->id)
+            $userFirebase = Device::where('user_id', $user->id)
                 ->where('device', $request->device)
                 ->where('code', $request->code)
                 ->first();
 
-            if ($userFirebase instanceof Devices) {
-                $success['token'] = $user->createToken('MyApp')->accessToken;
+            if ($userFirebase instanceof Device) {
+                $token = $user->createToken('MyApp')->accessToken;
 
                 $userFirebase->update([
-                    'token' => $success['token']
+                    'token' => $token
+
                 ]);
 
                 return Response()->json([
                     'code' => $this->successStatus,
                     'message' => 'کاربر کد را به درستی وارد کرده و ورود موفق',
-                    'data' => $success,
+                    'data' => $token,
                 ]);
 
             } else

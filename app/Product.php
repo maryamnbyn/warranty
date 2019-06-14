@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -9,6 +10,22 @@ class Product extends Model
     //
     protected $guarded = [];
     protected $appends = ['image_url'];
+
+
+    public function scopeExpired($query)
+    {
+        return $query->where('end_date_of_warranty', '<', Carbon::now());
+    }
+
+    public function scopeValid($query)
+    {
+        return $query->where('end_date_of_warranty', '>', Carbon::now());
+    }
+
+    public function scopeExpiring($query)
+    {
+        return $query->whereBetween('end_date_of_warranty', [Carbon::now(), Carbon::now()->addMonths(2)]);
+    }
 
     public function storeProduct($pic)
     {
@@ -22,6 +39,7 @@ class Product extends Model
             ]);
         }
     }
+
 
     public function updateProduct($pic)
     {
