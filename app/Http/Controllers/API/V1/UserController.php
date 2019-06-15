@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Device;
 use App\User;
-use App\User_Device;
 use Validator;
+use App\Device;
 use http\Env\Response;
-use App\Events\SMSCreated;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -21,8 +19,8 @@ class UserController extends Controller
     public function info()
     {
         $user = Auth::user();
-        return Response()->json(
-            [
+
+        return Response()->json([
                 'code' => $this->successStatus,
                 'message' => 'مشخصات کاربر',
                 'data' => [
@@ -57,7 +55,7 @@ class UserController extends Controller
             ]);
         }
 
-        $user->sendSMS('login', $request->device );
+        $user->sendSMS('login', $request->device);
 
         return response()->json([
             'code' => $this->successStatus,
@@ -103,9 +101,9 @@ class UserController extends Controller
             ]);
         }
 
-        $old_user = User::where('phone' ,$usr->phone )->first();
+        $old_user = User::where('phone', $usr->phone)->first();
 
-        $old_user->sendSMSUpdate('update' , $request->device , $request->phone);
+        $old_user->sendSMSUpdate('update', $request->device, $request->phone);
 
         return Response()->json([
             'code' => $this->successUpdate,
@@ -143,7 +141,7 @@ class UserController extends Controller
             'phone' => $request->phone,
         ]);
 
-        $user->sendSMS('register',$request->device);
+        $user->sendSMS('register', $request->device);
 
         return response()->json([
             'code' => $this->successStatus,
@@ -225,17 +223,16 @@ class UserController extends Controller
 
         if ($user instanceof User) {
 
-            $userFirebase = $user->devices()
-                ->where('device', $request->device)
+            $userFirebase = $user->devices()->where('device', $request->device)
                 ->where('code', $request->code)
                 ->first();
 
             if ($userFirebase instanceof Device) {
+
                 $token = $user->createToken('MyApp')->accessToken;
 
                 $userFirebase->update([
                     'token' => $token
-
                 ]);
 
                 return Response()->json([

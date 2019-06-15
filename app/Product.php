@@ -30,6 +30,7 @@ class Product extends Model
     public function storeProduct($pic)
     {
         if (!empty(request()->file('image'))) {
+
             $get_full_name_pic = $pic->getClientOriginalName();
             $get_path_pic = $pic->storeAs('upload', $get_full_name_pic, 'asset');
             $ProductPic = pathinfo($get_path_pic, PATHINFO_BASENAME);
@@ -46,6 +47,7 @@ class Product extends Model
         if(!empty(request()->file('image')))
         {
             if(!empty($this->image)){
+
                 unlink('picture/upload/' . $this->image);
 
                 $get_full_name_pic = $pic->getClientOriginalName();
@@ -57,6 +59,7 @@ class Product extends Model
                 ]);
             }
             else{
+
                 $get_full_name_pic = $pic->getClientOriginalName();
                 $get_path_pic = $pic->storeAs('upload', $get_full_name_pic, 'asset');
                 $ProductPic = pathinfo($get_path_pic, PATHINFO_BASENAME);

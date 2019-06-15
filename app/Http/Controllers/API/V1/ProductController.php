@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API\V1;
 
 use Validator;
 use App\Product;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
@@ -83,29 +82,29 @@ class ProductController extends Controller
         switch ($request->status)
         {
             case    'expired':
-                $products->expired();
+                $show_product = $products->expired()->paginate(config('page.paginate_page'));
                 break;
             case    'valid':
-                $products->valid();
+                $show_product = $products->valid()->paginate(config('page.paginate_page'));
                 break;
             case    'expiring':
-                $products->expiring();
+                $show_product = $products->expiring()->paginate(config('page.paginate_page'));
                 break;
         }
 
         return response()->json([
                 "code" => $this->successStatus,
                 "message" => "نمایش همه محصولات",
-                "data" => $products->paginate(config('page.paginate_page'))
+                "data" => collect($show_product->items())
                     ->map(function ($product) {
 
-                        return $product->except([
+                        return collect($product)->except([
                                 'created_at',
                                 'updated_at'
                             ]
                         );
                     }),
-                'has_more' => $products->hasMorePages()
+                "has_more" => $show_product->hasMorePages()
             ]
         );
 
