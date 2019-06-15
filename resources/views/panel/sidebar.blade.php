@@ -89,7 +89,13 @@
             </ul>
 
             <hr class="my-3">
-
+            <ul class="navbar-nav pr-0 active" dir="rtl">
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('admin/drugs') ? 'active' : '' }}" href="">
+                        <i class=" ni ni-single-02 text-primary pl-4"></i>لیست محصولات
+                    </a>
+                </li>
+            </ul>
             {{--<ul class="dropdown-container navbar-nav pr-0 dropdown active" dir="rtl">--}}
                 {{--<li class="nav-item nav-link">--}}
                     {{--<strong>نمودار ها</strong>--}}
@@ -130,8 +136,8 @@
             <hr class="my-3">
             <ul class="navbar-nav pr-0 active" dir="rtl">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('admin/drugs') ? 'active' : '' }}" href="">
-                        <i class=" ni ni-single-02 text-primary pl-4"></i>داروها
+                    <a class="nav-link {{ request()->is('admin/drugs') ? 'active' : '' }}" href="/admin/users">
+                        <i class=" ni ni-single-02 text-primary pl-4"></i>لیست کاربران
                     </a>
                 </li>
             </ul>

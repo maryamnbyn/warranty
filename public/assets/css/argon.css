@@ -300,6 +300,7 @@ svg
 table
 {
     border-collapse: collapse;
+    text-align: center;
 }
 
 caption
@@ -887,6 +888,7 @@ pre code
     min-height: 1px;
     padding-right: 15px;
     padding-left: 15px;
+    direction: rtl;
 }
 
 .col
@@ -1773,7 +1775,6 @@ pre code
     }
     .col-xl-8
     {
-        max-width: 66.66667%; 
 
         flex: 0 0 66.66667%;
     }
@@ -9548,6 +9549,8 @@ button.bg-darker:focus
 .my-0
 {
     margin-bottom: 0 !important;
+    text-align: right;
+
 }
 
 .ml-0,
@@ -18012,8 +18015,8 @@ a.btn-icon-only
 .form-control-label
 {
     font-size: .875rem;
-    font-weight: 600; 
-
+    font-weight: 600;
+    float: right;
     color: #525f7f;
 }
 
@@ -20869,7 +20872,7 @@ textarea[resize='horizontal']
 
     letter-spacing: 1px;
     text-transform: uppercase;
-
+    text-align: center;
     border-bottom: 1px solid #e9ecef;
 }
 
@@ -20891,6 +20894,7 @@ textarea[resize='horizontal']
     font-size: .8125rem;
 
     white-space: nowrap;
+
 }
 
 .table.align-items-center td,
