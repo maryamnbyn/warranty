@@ -1,7 +1,10 @@
 
 @include('panel.head')
+<title>نمودار ثبت نام کاربر</title>
 
+{!! Charts::styles() !!}
 <body>
+
 <!-- Sidenav -->
 
 
@@ -20,6 +23,17 @@
     </div>
     <!-- Page content -->
     <div class="container-fluid mt--7">
+
+        <div class="app">
+            <center>
+                {!! $chart->html() !!}
+            </center>
+        </div>
+        <!-- End Of Main Application -->
+    {!! Charts::scripts() !!}
+    {!! $chart->script() !!}
+
+
         <!-- start Card's -->
         {{--<div class="card-deck" >--}}
             {{--<div class="card">--}}

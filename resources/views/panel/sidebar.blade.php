@@ -81,7 +81,7 @@
             <ul class="navbar-nav pr-0" dir="rtl">
                 <li class="nav-item">
                     <strong>
-                        <a class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }} " href="#">
+                        <a class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }} " href="/admin/dashboard">
                             <i class="ni ni-single-02 text-primary pl-4"></i>داشبورد
                         </a>
                     </strong>
@@ -91,7 +91,7 @@
             <hr class="my-3">
             <ul class="navbar-nav pr-0 active" dir="rtl">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('admin/drugs') ? 'active' : '' }}" href="/admin/products">
+                    <a class="nav-link {{ request()->is('admin/products') ? 'active' : '' }}" href="/admin/products">
                         <i class=" ni ni-single-02 text-primary pl-4"></i>لیست محصولات
                     </a>
                 </li>
@@ -136,7 +136,7 @@
             <hr class="my-3">
             <ul class="navbar-nav pr-0 active" dir="rtl">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('admin/drugs') ? 'active' : '' }}" href="/admin/users">
+                    <a class="nav-link {{ request()->is('admin/users') ? 'active' : '' }}" href="/admin/users">
                         <i class=" ni ni-single-02 text-primary pl-4"></i>لیست کاربران
                     </a>
                 </li>

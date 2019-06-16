@@ -17,4 +17,5 @@ Route::group(['as'=>'admin.','namespace' => 'Admin' ,'prefix' => 'admin'] ,funct
     Route::resource('/users', 'UserController')->except('show');
     Route::resource('/products', 'ProductController')->except('show');
     Route::get('/dashboard', 'UserController@dashboard')->name('adminpannel');
+    Route::get('/test', 'UserController@test');
 });

@@ -163,7 +163,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
         Ipecompany\Smsirlaravel\SmsirlaravelServiceProvider::class,
-
+        ConsoleTVs\Charts\ChartsServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -229,7 +229,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Smsirlaravel' => Ipecompany\Smsirlaravel\SmsirlaravelFacade::class,
-
+        'Charts' => ConsoleTVs\Charts\Facades\Charts::class,
     ],
 
 ];
