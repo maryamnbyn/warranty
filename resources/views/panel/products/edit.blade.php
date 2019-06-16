@@ -110,26 +110,65 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <form method="post"
-                          action="{{route('admin.users.update',['user'=>$user->id])}}">
+                    <form method="post" action="{{route('admin.products.update',['product'=>$product->id])}}">
                         {!! csrf_field() !!}
                         @method('PUT')
                         <div class="col">
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-control-label" for="input-username">نام</label>
-                                        <input type="text" name="name" id="input-username"
+                                        <label class="form-control-label" for="input-username">نام کاربری</label>
+                                        <input type="text" name="user_name" id="input-username"
                                                class="form-control form-control-alternative" placeholder="Username"
-                                               value="{{$user->name}}">
+                                               value="{{$product->user->name}}">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label class="form-control-label" for="input-phone">شماره تماس</label>
-                                        <input type="text" name="phone" id="input-phone"
-                                               class="form-control form-control-alternative " value="{{$user->phone}}"
-                                               placeholder="0912*******">
+                                        <label class="form-control-label" for="input-username">نام محصول</label>
+                                        <input type="text" name="name" id="input-product_name"
+                                               class="form-control form-control-alternative" placeholder="product_name"
+                                               value="{{$product->name}}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-phone">تاریخ خرید</label>
+                                        <input type="text" name="purchase_date" id="purchase_date"
+                                               class="form-control form-control-alternative "
+                                               value="{{$product->purchase_date}}" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-phone">شماره کارانتی</label>
+                                        <input type="text" name="warranty_number" id="warranty_number"
+                                               class="form-control form-control-alternative "
+                                               value="{{$product->warranty_number}}" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-phone">تاریخ پایان گارانتی</label>
+                                        <input type="text" name="end_date_of_warranty" id="end_date_of_warranty"
+                                               class="form-control form-control-alternative "
+                                               value="{{$product->end_date_of_warranty}}" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-phone">شماره فاکتور</label>
+                                        <input type="text" name="factor_number" id="input-factor_number"
+                                               class="form-control form-control-alternative "
+                                               value="{{$product->factor_number}}" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-phone">شماره فروشنده</label>
+                                        <input type="text" name="seller_phone" id="input-phone"
+                                               class="form-control form-control-alternative "
+                                               value="{{$product->seller_phone}}" placeholder="">
                                     </div>
                                 </div>
                             </div>

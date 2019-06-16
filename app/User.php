@@ -42,6 +42,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Device::class , 'user_device' );
     }
 
+    public function products()
+    {
+        return $this->hasMany(Product::class );
+    }
+
     public function sendSMS($action ,$UUID = null, $digit = null)
     {
         if (is_null($digit)) $digit = config('verify.digit');

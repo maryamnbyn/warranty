@@ -91,7 +91,7 @@
             <hr class="my-3">
             <ul class="navbar-nav pr-0 active" dir="rtl">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('admin/drugs') ? 'active' : '' }}" href="">
+                    <a class="nav-link {{ request()->is('admin/drugs') ? 'active' : '' }}" href="/admin/products">
                         <i class=" ni ni-single-02 text-primary pl-4"></i>لیست محصولات
                     </a>
                 </li>

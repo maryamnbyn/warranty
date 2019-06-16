@@ -11,6 +11,10 @@ class Product extends Model
     protected $guarded = [];
     protected $appends = ['image_url'];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function scopeExpired($query)
     {
