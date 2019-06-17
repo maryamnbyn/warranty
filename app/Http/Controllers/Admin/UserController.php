@@ -13,69 +13,84 @@ class UserController extends Controller
 {
 
     public function dashboard()
-    { $last_year = Carbon::now()->subMonth(12);
+    {
+        $last_year = Carbon::now()->subMonth(12);
 
-        $users = User::where('created_at','>',$last_year)->selectRaw('COUNT(*) as count, YEAR(created_at) year, MONTH(created_at) month')
+        $users = User::where('created_at', '>', $last_year)->selectRaw('COUNT(*) as count, YEAR(created_at) year, MONTH(created_at) month')
             ->groupBy('year', 'month')
             ->get();
 
-        $i=0;
+        if ($users->first() != null) {
 
-        foreach ($users as $user){
-            $count[$i] = $user->count;
-            switch ($user->month)
-            {
-                case    '1':
-                    $month[$i] = 'دی ';
-                    break;
-                case    '2':
-                    $month[$i] = 'بهمن ';
-                    break;
-                case    '3':
-                    $month[$i] = 'اسفند ';
-                    break;
-                case    '4':
-                    $month[$i] = 'فروردین ';
-                    break;
-                case    '5':
-                    $month[$i] = 'اریبهشت';
-                    break;
-                case    '6':
-                    $month[$i] = 'خرداد ';
-                    break;
-                case    '7':
-                    $month[$i] = 'تیر ';
-                    break;
-                case    '8':
-                    $month[$i] = 'مرداد ';
-                    break;
-                case    '9':
-                    $month[$i] = 'شهریور ';
-                    break;
+            $i = 0;
 
-                case    '10':
-                    $month[$i] = 'مهر ';
-                    break;
-                case    '11':
-                    $month[$i] = 'آبان ';
-                    break;
-                case    '12':
-                    $month[$i] = 'آذر ';
-                    break;
+            foreach ($users as $user) {
+
+                $count[$i] = $user->count;
+
+                switch ($user->month) {
+                    case    '1':
+                        $month[$i] = 'دی ';
+                        break;
+                    case    '2':
+                        $month[$i] = 'بهمن ';
+                        break;
+                    case    '3':
+                        $month[$i] = 'اسفند ';
+                        break;
+                    case    '4':
+                        $month[$i] = 'فروردین ';
+                        break;
+                    case    '5':
+                        $month[$i] = 'اریبهشت';
+                        break;
+                    case    '6':
+                        $month[$i] = 'خرداد ';
+                        break;
+                    case    '7':
+                        $month[$i] = 'تیر ';
+                        break;
+                    case    '8':
+                        $month[$i] = 'مرداد ';
+                        break;
+                    case    '9':
+                        $month[$i] = 'شهریور ';
+                        break;
+
+                    case    '10':
+                        $month[$i] = 'مهر ';
+                        break;
+                    case    '11':
+                        $month[$i] = 'آبان ';
+                        break;
+                    case    '12':
+                        $month[$i] = 'آذر ';
+                        break;
+                }
+                $i++;
+
             }
-            $i++;
 
+            $chart = Charts::create('line', 'highcharts')
+                ->title('نمودار نمایش کاربران')
+                ->elementLabel('نمودار نمایش کاربران')
+                ->labels($month)
+                ->values($count)
+                ->dimensions(1000, 500)
+                ->responsive(false);
+
+            return view('panel.dashboard', ['chart' => $chart]);
         }
 
         $chart = Charts::create('line', 'highcharts')
             ->title('نمودار نمایش کاربران')
             ->elementLabel('نمودار نمایش کاربران')
-            ->labels($month)
-            ->values($count)
-            ->dimensions(1000,500)
+            ->labels('فروردی' , 'اردیبهشت' , 'خرداد' ,' تیر' ,'مرداد' ,'شهریور' ,'مهر' ,'آبان' ,'آذر' , 'دی' ,'بهمن' ,'اسفند')
+            ->values(0,0,0,0,0,0,0,0,0,0,0,0)
+            ->dimensions(1000, 500)
             ->responsive(false);
 
-        return view('panel.dashboard', ['chart' => $chart]);
+        return view('panel.dashboard_without_chart', ['chart' => $chart]);
     }
 
     public function index()

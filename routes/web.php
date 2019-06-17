@@ -13,9 +13,8 @@
 
 Auth::routes();
 
-Route::group(['as'=>'admin.','namespace' => 'Admin' ,'prefix' => 'admin'] ,function(){
+Route::group(['as'=>'admin.','namespace' => 'Admin' ,'prefix' => 'admin' , 'middleware'=>'admin'] ,function(){
     Route::resource('/users', 'UserController')->except('show');
     Route::resource('/products', 'ProductController')->except('show');
     Route::get('/dashboard', 'UserController@dashboard')->name('adminpannel');
-    Route::get('/test', 'UserController@test');
 });

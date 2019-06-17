@@ -145,7 +145,7 @@
             <hr class="my-3">
             <ul class="navbar-nav pr-0 active" dir="rtl">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('logout') }}"
+                    <a class="nav-link" href="/login"
                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                         <i class="ni ni-single-02 text-primary pl-4"></i>خروج از حساب کاربری
