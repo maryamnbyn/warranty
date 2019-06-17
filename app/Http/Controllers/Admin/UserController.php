@@ -85,12 +85,12 @@ class UserController extends Controller
         $chart = Charts::create('line', 'highcharts')
             ->title('نمودار نمایش کاربران')
             ->elementLabel('نمودار نمایش کاربران')
-            ->labels('فروردی' , 'اردیبهشت' , 'خرداد' ,' تیر' ,'مرداد' ,'شهریور' ,'مهر' ,'آبان' ,'آذر' , 'دی' ,'بهمن' ,'اسفند')
-            ->values(0,0,0,0,0,0,0,0,0,0,0,0)
+            ->labels(['فروردی' , 'اردیبهشت' , 'خرداد' ,' تیر' ,'مرداد' ,'شهریور' ,'مهر' ,'آبان' ,'آذر' , 'دی' ,'بهمن' ,'اسفند'])
+            ->values([0,0,0,0,0,0,0,0,0,0,0,0])
             ->dimensions(1000, 500)
             ->responsive(false);
 
-        return view('panel.dashboard_without_chart', ['chart' => $chart]);
+        return view('panel.dashboard', ['chart' => $chart]);
     }
 
     public function index()
