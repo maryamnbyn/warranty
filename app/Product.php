@@ -21,6 +21,11 @@ class Product extends Model
         return $query->where('end_date_of_warranty', '<', Carbon::now());
     }
 
+    public function scopeAll($query)
+    {
+        return $query->first();
+    }
+
     public function scopeValid($query)
     {
         return $query->where('end_date_of_warranty', '>', Carbon::now());

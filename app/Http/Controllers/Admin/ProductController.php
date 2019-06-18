@@ -37,7 +37,7 @@ class ProductController extends Controller
         ]);
 
         $product->update([
-            'name' => $request->input('name'),
+            'name' => $request->name,
             'purchase_date' => $request->input('purchase_date'),
             'warranty_number' => $request->input('warranty_number'),
             'end_date_of_warranty' => $request->input('end_date_of_warranty'),

@@ -51,30 +51,30 @@
                                             {{--<img alt="Image placeholder" src="../assets/img/theme/bootstrap.jpg">--}}
                                             {{--</a>--}}
                                             <div class="media-body">
-                                                <span class="mb-0 text-sm">{{$product->id}}</span>
+                                                <span class="mb-0 text-sm">{{$product['id']}}</span>
                                             </div>
                                         </div>
                                     </th>
 
                                     <td>
-                                        {{$product->user->name}}
+                                        {{$product->user['name']}}
                                     </td>
                                     <td>
                       <span class="badge badge-dot mr-4">
-                        <i class="bg-warning"></i>   {{$product->name}}
+                        <i class="bg-warning"></i>   {{$product['name']}}
                       </span>
                                     </td>
                                     <td>
-                                        {{$product->warranty_number}}
+                                        {{$product['warranty_number']}}
                                     </td>
                                     <td>
-                                        {{$product->purchase_date}}
+                                        {{$product['purchase_date']}}
                                     </td>
                                     <td>
-                                        {{$product->end_date_of_warranty}}
+                                        {{$product['end_date_of_warranty']}}
                                     </td>
                                     <td>
-                                        {{$product->seller_phone}}
+                                        {{$product['seller_phone']}}
                                     </td>
 
 

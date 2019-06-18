@@ -9,29 +9,18 @@ use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable
 {
     use Notifiable, HasApiTokens;
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+
+
     protected $fillable = [
         'name', 'phone'
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
+
     protected $hidden = [
         'password', 'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
+
     protected $casts = [
         'email_verified_at' => 'date
          time',
@@ -53,7 +42,7 @@ class User extends Authenticatable
 
         $random_number = rand(pow(10, $digit - 1), pow(10, $digit) - 1);
 
-        $device =  $this->devices()->where('device', $UUID)->first();
+        $device =  $this->devices()->where('uu_id', $UUID)->first();
 
             if (! empty($device)) {
 
@@ -61,7 +50,7 @@ class User extends Authenticatable
 
             } else {
 
-                $device = ($this->devices())->create(['device' => $UUID , 'code' =>$random_number ]);
+                $device = ($this->devices())->create(['uu_id' => $UUID , 'code' =>$random_number ]);
             }
 
        $text =  __('messages.'. $action , ['user' => $this->name, 'code' => $device->code]);
@@ -71,11 +60,13 @@ class User extends Authenticatable
 
     public function sendSMSUpdate($action , $UUID ,$phone , $digit = null)
     {
-        if (is_null($digit)) $digit = config('verify.digit');
+       // if (is_null($digit)) $digit = config('verify.digit');
+        $digit = $digit ?? config('verify.digit');
+
 
         $random_number = rand(pow(10, $digit - 1), pow(10, $digit) - 1);
 
-        $device =  $this->devices()->where('device', $UUID)->first();
+        $device =  $this->devices()->where('uu_id', $UUID)->first();
 
         if (! empty($device)) {
 
@@ -83,7 +74,7 @@ class User extends Authenticatable
 
         } else {
 
-            $device = ($this->devices())->create(['device' => $UUID , 'code' =>$random_number ]);
+            $device = ($this->devices())->create(['uu_id' => $UUID , 'code' =>$random_number ]);
         }
 
         $text =  __('messages.'. $action , ['user' => $this->name, 'code' => $device->code]);

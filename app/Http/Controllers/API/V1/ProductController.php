@@ -90,6 +90,9 @@ class ProductController extends Controller
             case    'expiring':
                 $show_product = $products->expiring()->paginate(config('page.paginate_page'));
                 break;
+            case    'all':
+                $show_product = $products->all()->paginate(config('page.paginate_page'));
+                break;
         }
 
         return response()->json([
@@ -105,8 +108,7 @@ class ProductController extends Controller
                         );
                     }),
                 "has_more" => $show_product->hasMorePages()
-            ]
-        );
+            ]);
 
     }
 

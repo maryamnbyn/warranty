@@ -7,7 +7,6 @@ use App\User;
 use Carbon\Carbon;
 use ConsoleTVs\Charts\Facades\Charts;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {

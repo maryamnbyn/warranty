@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Device extends Model
 {
     protected $fillable = [
-        'user_id', 'token','device','code'
+        'user_id', 'token','uu_id','code'
     ];
 
     public function users()

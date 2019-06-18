@@ -34,7 +34,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'phone' => 'required|regex:/(09)[0-9]{9}/',
-            'device' => 'required|unique:devices'
+            'uu_id' => 'required|unique:devices'
         ]);
 
         if ($validator->fails()) {
@@ -55,7 +55,7 @@ class UserController extends Controller
             ]);
         }
 
-        $user->sendSMS('login', $request->device);
+        $user->sendSMS('login', $request->uu_id);
 
         return response()->json([
             'code' => $this->successStatus,
@@ -78,7 +78,6 @@ class UserController extends Controller
             ]);
         }
         $usr = Auth::user();
-
         $usr->name = $request->name;
 
         if (empty($request->phone)) {
@@ -103,7 +102,7 @@ class UserController extends Controller
 
         $old_user = User::where('phone', $usr->phone)->first();
 
-        $old_user->sendSMSUpdate('update', $request->device, $request->phone);
+        $old_user->sendSMSUpdate('update', $request->uu_id, $request->phone);
 
         return Response()->json([
             'code' => $this->successUpdate,
@@ -125,7 +124,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'phone' => 'unique:users|max:14||regex:/(09)[0-9]{9}/',
-            'device' => 'required',
+            'uu_id' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -141,7 +140,7 @@ class UserController extends Controller
             'phone' => $request->phone,
         ]);
 
-        $user->sendSMS('register', $request->device);
+        $user->sendSMS('register', $request->uu_id);
 
         return response()->json([
             'code' => $this->successStatus,
@@ -153,7 +152,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'phone' => 'required|unique:users|regex:/(09)[0-9]{9}/',
-            'device' => 'required',
+            'uu_id' => 'required',
             'code' => 'required|max:5',
         ]);
 
@@ -167,7 +166,7 @@ class UserController extends Controller
 
         $user = Auth::user();
 
-        $device = $user->devices()->where('device', $request->device)
+        $device = $user->devices()->where('uu_id', $request->uu_id)
             ->where('code', $request->code)
             ->first();
 
@@ -207,7 +206,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'code' => 'required|min:4',
-            'device' => 'required',
+            'uu_id' => 'required',
             'phone' => 'required|regex:/(09)[0-9]{9}/',
         ]);
 
@@ -223,7 +222,7 @@ class UserController extends Controller
 
         if ($user instanceof User) {
 
-            $userFirebase = $user->devices()->where('device', $request->device)
+            $userFirebase = $user->devices()->where('uu_id', $request->uu_id)
                 ->where('code', $request->code)
                 ->first();
 

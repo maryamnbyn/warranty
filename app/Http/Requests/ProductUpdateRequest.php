@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ProductUpdateRequest extends FormRequest
 {
@@ -32,4 +34,10 @@ class ProductUpdateRequest extends FormRequest
             'seller_phone' => 'required',
         ];
     }
+
+//
+//    protected function failedValidation(Validator $validator)
+//    {
+//        throw new HttpResponseException(response(12));
+//    }
 }

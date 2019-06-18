@@ -2300,7 +2300,6 @@ pre code
     .table-responsive-xl
     {
         display: block;
-        overflow-x: auto;
 
         width: 100%;
 
@@ -2316,7 +2315,6 @@ pre code
 .table-responsive
 {
     display: block;
-    overflow-x: auto;
 
     width: 100%;
 
