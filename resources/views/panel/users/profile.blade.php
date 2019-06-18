@@ -24,42 +24,57 @@
             <div class="col">
                 <div class="card shadow">
                     <div class="card-header border-0">
-                        <h3 class="mb-0">لیست کاربران</h3>
+                        <h3 class="mb-0">لیست محصولات کاربر</h3>
                     </div>
                     <div class="table-responsive">
                         <table class="table align-items-center table-flush">
                             <thead class="thead-light">
                             <tr>
                                 <th scope="col">شناسه</th>
-                                <th scope="col">نام</th>
-                                <th scope="col">شماره تماس</th>
-                                <th scope="col"></th>
-                                <th scope="col"></th>
+                                <th scope="col">نام محصول</th>
+                                <th scope="col">شماه گارانتی</th>
+                                <th scope="col">تاریخ خرید</th>
+                                <th scope="col">تاریخ پایان گارانتی</th>
+                                <th scope="col">شماره فروشنده</th>
                                 <th scope="col"></th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
 
-                                @foreach($users as $user)
+                                @foreach($products as $product)
+
                                     <th scope="row">
                                         <div class="media align-items-center">
                                             {{--<a href="#" class="avatar rounded-circle mr-3">--}}
-                                                {{--<img alt="Image placeholder" src="../assets/img/theme/bootstrap.jpg">--}}
+                                            {{--<img alt="Image placeholder" src="../assets/img/theme/bootstrap.jpg">--}}
                                             {{--</a>--}}
                                             <div class="media-body">
-                                                <span class="mb-0 text-sm">{{$user->id}}</span>
+                                                <span class="mb-0 text-sm">{{$product['id']}}</span>
                                             </div>
                                         </div>
                                     </th>
 
-                                    <td>
-                                        {{$user->name}}                                </td>
+
                                     <td>
                       <span class="badge badge-dot mr-4">
-                        <i class="bg-warning"></i>   {{$user->phone}}
+                        <i class="bg-warning"></i>   {{$product['name']}}
                       </span>
                                     </td>
+                                    <td>
+                                        {{$product['warranty_number']}}
+                                    </td>
+                                    <td>
+                                        {{$product['purchase_date']}}
+                                    </td>
+                                    <td>
+                                        {{$product['end_date_of_warranty']}}
+                                    </td>
+                                    <td>
+                                        {{$product['seller_phone']}}
+                                    </td>
+
+
 
                                     <td class="text-right">
                                         <div class="dropdown">
@@ -68,13 +83,15 @@
                                                 <i class="fas fa-ellipsis-v"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                                                <form action="{{ route('admin.users.destroy',['user' =>$user->id ]) }}"
+                                                <form action="{{ route('admin.products.destroy',['user' =>$product->id ]) }}"
                                                       method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                <button class="dropdown-item" href="#" onClick="deleteme({{$user->id}})">حذف</button>
-                                                <a class="dropdown-item" href="{{ route('admin.users.edit',['user' =>$user->id ])  }}">ویرایش</a>
-                                                <a class="dropdown-item" href="{{ route('admin.users.profile',['user' =>$user->id ])  }}">مشاهده پروفایل</a>
+                                                    <button class="dropdown-item" href="#"
+                                                            onClick="deleteme({{$product->id}})">حذف
+                                                    </button>
+                                                    <a class="dropdown-item"
+                                                       href="{{ route('admin.products.edit',['products' =>$product->id ])  }}">ویرایش</a>
                                                 </form>
                                             </div>
                                         </div>
@@ -82,7 +99,7 @@
                                     <script language="javascript">
                                         function deleteme(id) {
                                             if (confirm("Do you want Delete!")) {
-                                                window.location.href = 'users.destroy?del=' + id + '';
+                                                window.location.href = 'products.destroy?del=' + id + '';
                                                 return true;
                                             }
                                         }

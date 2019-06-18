@@ -143,6 +143,21 @@
             </ul>
 
             <hr class="my-3">
+
+            <ul class="navbar-nav pr-0 active" dir="rtl">
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('admin/users') ? 'active' : '' }}" href="/admin/profile">
+                        <i class=" ni ni-single-02 text-primary pl-4"></i>مشاهده پروفایل
+                    </a>
+                </li>
+            </ul>
+
+            <hr class="my-3">
+
+
+
+
+
             <ul class="navbar-nav pr-0 active" dir="rtl">
                 <li class="nav-item">
                     <a class="nav-link" href="/login"

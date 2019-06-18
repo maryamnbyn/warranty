@@ -15,6 +15,12 @@ Auth::routes();
 
 Route::group(['as'=>'admin.','namespace' => 'Admin' ,'prefix' => 'admin' ] ,function(){
     Route::resource('/users', 'UserController')->except('show');
+    Route::get('/profile', 'AdminController@Profile')->name('profile');
     Route::resource('/products', 'ProductController')->except('show');
     Route::get('/dashboard', 'UserController@dashboard')->name('adminpannel');
+    Route::get('user/{user}/profile', 'UserController@showProfile')->name('users.profile');
+    Route::post('profile/update/{user}', 'AdminController@update')->name('profile.update');
 });
+
+
+

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Admin;
 use App\Http\Requests\UserUpdateRequest;
+use App\Product;
 use App\User;
 use Carbon\Carbon;
 use ConsoleTVs\Charts\Facades\Charts;
@@ -10,6 +12,11 @@ use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
+    public function showProfile(User $user)
+    {
+       $products = Product::where('user_id' ,$user->id)->get();
+        return view('panel.users.profile', compact('products'));
+    }
 
     public function dashboard()
     {
