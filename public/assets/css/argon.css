@@ -16577,6 +16577,7 @@ a.text-lighter:focus
 .alert
 {
     font-size: .875rem;
+    text-align: right;
 }
 
 .alert-heading

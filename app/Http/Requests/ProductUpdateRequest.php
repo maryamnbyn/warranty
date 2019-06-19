@@ -26,6 +26,7 @@ class ProductUpdateRequest extends FormRequest
     public function rules()
     {
         return [
+            'user_name' => 'required',
             'name' => 'required',
             'warranty_number' => 'required',
             'purchase_date' => 'required',

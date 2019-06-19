@@ -1,6 +1,6 @@
 
 @include('panel.head')
-<title>نمودار ثبت نام کاربر</title>
+<title class="font-family">نمودار ثبت نام کاربر</title>
 
 {!! Charts::styles() !!}
 <body>

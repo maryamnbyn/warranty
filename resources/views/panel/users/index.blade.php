@@ -92,10 +92,9 @@
 
                             </tbody>
                         </table>
-                        <div style="text-align:center;">
-                            {!! $users->render() !!}
-                        </div>
+
                     </div>
+
                     {{--<div class="card-footer py-4">--}}
                     {{--<nav aria-label="...">--}}
                     {{--<ul class="pagination justify-content-end mb-0">--}}
@@ -121,6 +120,9 @@
                     {{--</ul>--}}
                     {{--</nav>--}}
                     {{--</div>--}}
+                    <div style="text-align:center;">
+                        {!! $users->render() !!}
+                    </div>
                 </div>
             </div>
         </div>
