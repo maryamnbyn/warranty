@@ -89,7 +89,9 @@
                                     </script>
                             </tr>
                             @endforeach
-
+                            <div style="text-align:center;">
+                                {!! $users->render() !!}
+                            </div>
                             </tbody>
                         </table>
                     </div>

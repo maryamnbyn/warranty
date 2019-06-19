@@ -109,7 +109,9 @@
                                     </script>
                             </tr>
                             @endforeach
-
+                            <div style="text-align:center;">
+                                {!! $products->render() !!}
+                            </div>
                             </tbody>
                         </table>
                     </div>

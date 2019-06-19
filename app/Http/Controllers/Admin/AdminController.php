@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
 
+    public function index()
+    {
+        return view('panel.admin.index', compact('admins'));
+    }
     public function Profile()
     {
         $admins = Admin::all();
