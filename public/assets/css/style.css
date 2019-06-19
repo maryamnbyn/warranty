@@ -209,7 +209,9 @@ a1 {
     font-size: 22px;
     color: black;
 }
-
+rtl {
+    direction: rtl;
+}
 button:hover, a:hover {
     opacity: 0.7;
 }

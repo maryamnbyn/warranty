@@ -17595,6 +17595,7 @@ a.btn-icon-only
     {
         padding-right: 39px !important; 
         padding-left: 39px !important;
+        direction: rtl;
     }
 }
 

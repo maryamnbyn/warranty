@@ -18,6 +18,7 @@
     </div>
 
     <!-- Page content -->
+    <div class="rtl">
     <div class="container-fluid mt--7">
 
         <!-- Table -->
@@ -150,6 +151,7 @@
                 </div>
             </div>
         </div>
+    </div>
         <!-- Dark table -->
 
         <!-- Footer -->
