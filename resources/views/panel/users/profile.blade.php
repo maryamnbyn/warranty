@@ -19,10 +19,21 @@
 
     <!-- Page content -->
     <div class="container-fluid mt--7">
+
         <!-- Table -->
         <div class="row">
             <div class="col">
-                <div class="card shadow">
+                <div class=" card-user">
+                    <img  class="card-body" src="/picture/upload/1.png" alt="John" style="width:100%">
+
+                    <p class="title">{{$user->name}}</p>
+                    <p>{{$user->phone}}</p>
+
+                    <p><a href="{{ route('admin.users.edit',['user' =>$user->id ])  }}">ویرایش کاربر</a></p>
+                </div>
+            </div>
+            <div class="col">
+                {{--<div class="card shadow">--}}
                     <div class="card-header border-0">
                         <h3 class="mb-0">لیست محصولات کاربر</h3>
                     </div>
@@ -39,6 +50,7 @@
                                 <th scope="col"></th>
                             </tr>
                             </thead>
+
                             <tbody>
                             <tr>
 

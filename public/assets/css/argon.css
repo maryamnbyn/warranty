@@ -889,6 +889,7 @@ pre code
     padding-right: 15px;
     padding-left: 15px;
     direction: rtl;
+    background-color: white;
 }
 
 .col
@@ -20961,6 +20962,7 @@ p
     font-size: 1rem;
     font-weight: 300;
     line-height: 1.7;
+    margin-top: 15px;
 }
 
 .lead

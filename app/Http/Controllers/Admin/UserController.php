@@ -15,7 +15,8 @@ class UserController extends Controller
     public function showProfile(User $user)
     {
        $products = Product::where('user_id' ,$user->id)->get();
-        return view('panel.users.profile', compact('products'));
+
+        return view('panel.users.profile', compact('products','user'));
     }
 
     public function dashboard()
