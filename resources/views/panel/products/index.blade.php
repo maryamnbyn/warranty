@@ -109,11 +109,12 @@
                                     </script>
                             </tr>
                             @endforeach
-                            <div style="text-align:center;">
-                                {!! $products->render() !!}
-                            </div>
+
                             </tbody>
                         </table>
+                        <div style="text-align:center;">
+                            {!! $products->render() !!}
+                        </div>
                     </div>
                     {{--<div class="card-footer py-4">--}}
                     {{--<nav aria-label="...">--}}
