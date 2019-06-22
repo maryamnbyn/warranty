@@ -104,7 +104,10 @@ class UserController extends Controller
 
         $old_user->sendSMSUpdate('update', $request->uu_id, $request->phone);
 
+        $usr->save();
+
         return Response()->json([
+
             'code' => $this->successUpdate,
             'message' => 'کد برای شما ارسال شد',
         ]);
