@@ -97,7 +97,8 @@ class AdminController extends Controller
 
     public function index()
     {
-        return view('panel.admin.index', compact('admins'));
+        return redirect('/login');
+//        return view('panel.admin.index', compact('admins'));
     }
     public function Profile()
     {
