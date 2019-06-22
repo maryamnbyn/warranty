@@ -9,6 +9,7 @@ use App\Http\Requests\adminUpdateRequest;
 use App\User;
 use Carbon\Carbon;
 use ConsoleTVs\Charts\Facades\Charts;
+use Morilog\Jalali\CalendarUtils;
 
 class AdminController extends Controller
 {
@@ -18,7 +19,7 @@ class AdminController extends Controller
         $last_year = Carbon::now()->subMonth(12);
 
         $users = User::where('created_at', '>', $last_year)->selectRaw('COUNT(*) as count, YEAR(created_at) year, MONTH(created_at) month')
-            ->groupBy('year', 'month')
+            ->groupBy('year', 'month' )
             ->get();
 
         if ($users->first() != null) {
@@ -27,47 +28,12 @@ class AdminController extends Controller
 
             foreach ($users as $user) {
 
+                $date = [$user->year,$user->month,1];
+
+                $month[$i]= CalendarUtils::strftime('y F', strtotime(join('-',$date)));
+
                 $count[$i] = $user->count;
 
-                switch ($user->month) {
-                    case    '1':
-                        $month[$i] = 'دی ';
-                        break;
-                    case    '2':
-                        $month[$i] = 'بهمن ';
-                        break;
-                    case    '3':
-                        $month[$i] = 'اسفند ';
-                        break;
-                    case    '4':
-                        $month[$i] = 'فروردین ';
-                        break;
-                    case    '5':
-                        $month[$i] = 'اریبهشت';
-                        break;
-                    case    '6':
-                        $month[$i] = 'خرداد ';
-                        break;
-                    case    '7':
-                        $month[$i] = 'تیر ';
-                        break;
-                    case    '8':
-                        $month[$i] = 'مرداد ';
-                        break;
-                    case    '9':
-                        $month[$i] = 'شهریور ';
-                        break;
-
-                    case    '10':
-                        $month[$i] = 'مهر ';
-                        break;
-                    case    '11':
-                        $month[$i] = 'آبان ';
-                        break;
-                    case    '12':
-                        $month[$i] = 'آذر ';
-                        break;
-                }
                 $i++;
 
             }
@@ -120,3 +86,5 @@ class AdminController extends Controller
         return redirect()->back();
     }
 }
+
+
