@@ -34,7 +34,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'phone' => 'required|regex:/(09)[0-9]{9}/',
-            'uu_id' => 'unique:devices'
+            'uu_id' => 'required'
         ]);
 
         if ($validator->fails()) {
