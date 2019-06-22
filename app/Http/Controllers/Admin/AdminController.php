@@ -9,7 +9,6 @@ use App\Http\Requests\adminUpdateRequest;
 use App\User;
 use Carbon\Carbon;
 use ConsoleTVs\Charts\Facades\Charts;
-use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {

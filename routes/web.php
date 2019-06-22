@@ -22,6 +22,6 @@ Route::group(['as'=>'admin.','namespace' => 'Admin' ,'prefix' => 'admin' ,'middl
     Route::post('profile/update/{user}', 'AdminController@update')->name('profile.update');
 });
 
-Route::get('/', 'admin\AdminController@index')->name('index');
+Route::get('/', 'Admin\AdminController@index')->name('index');
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
