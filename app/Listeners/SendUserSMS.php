@@ -3,7 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\SMSCreated;
-use App\Firebase;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Ipecompany\Smsirlaravel\Smsirlaravel;
 

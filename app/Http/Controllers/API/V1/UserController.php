@@ -191,9 +191,8 @@ class UserController extends Controller
             return Response()->json([
                 'code' => $this->successStatus,
                 'message' => 'تغییرات شماره انجام شد',
-                'data' => [
-                    'token' => $token
-                ]
+                'data' => $token
+
             ]);
 
         } else {
