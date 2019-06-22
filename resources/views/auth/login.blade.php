@@ -49,7 +49,15 @@
                 <div class="card bg-secondary shadow border-0">
 
                     <div class="card-body px-lg-5 py-lg-5">
-
+                        @if(count($errors))
+                            <div class="alert alert-danger">
+                                <ui>
+                                    @foreach($errors->all() as $error)
+                                        <li> {{$error}}</li>
+                                    @endforeach
+                                </ui>
+                            </div>
+                        @endif
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
                             <div class="form-group mb-3">
