@@ -28,7 +28,7 @@ class User extends Authenticatable
 
     public function devices()
     {
-        return $this->belongsToMany(Device::class , 'user_device' );
+        return $this->belongsToMany(Device::class , );
     }
 
     public function products()

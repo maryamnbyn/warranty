@@ -21,7 +21,7 @@ class CreateDevicesTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('user_device', function (Blueprint $table) {
+        Schema::create('device_user', function (Blueprint $table) {
             $table->bigInteger('device_id')->unsigned();
             $table->bigInteger('user_id')->unsigned();
 
@@ -47,7 +47,7 @@ class CreateDevicesTable extends Migration
     {
         Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('devices');
-        Schema::dropIfExists('user_device');
+        Schema::dropIfExists('device_user');
 
     }
 }
