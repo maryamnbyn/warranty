@@ -5,6 +5,7 @@ namespace App;
 use App\Events\SMSCreated;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Ipecompany\Smsirlaravel\Smsirlaravel;
 use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable
 {
@@ -50,12 +51,14 @@ class User extends Authenticatable
 
             } else {
 
-                $device = ($this->devices())->create(['uu_id' => $UUID , 'code' =>$random_number ]);
+                 ($this->devices())->create(['uu_id' => $UUID , 'code' =>$random_number ]);
             }
 
-       $text =  __('messages.'. $action , ['user' => $this->name, 'code' => $device->code]);
+//       $text =  __('messages.'. $action , ['user' => $this->name, 'code' => $device->code]);
 
-        event(new SMSCreated($this->phone, $text));
+//        event(new SMSCreated($this->phone, $text));
+
+        event(new SMSCreated($random_number , $this->phone));
     }
 
     public function sendSMSUpdate($action , $UUID ,$phone , $digit = null)
@@ -74,12 +77,15 @@ class User extends Authenticatable
 
         } else {
 
-            $device = ($this->devices())->create(['uu_id' => $UUID , 'code' =>$random_number ]);
+            ($this->devices())->create(['uu_id' => $UUID , 'code' =>$random_number ]);
         }
 
-        $text =  __('messages.'. $action , ['user' => $this->name, 'code' => $device->code]);
+//        $text =  __('messages.'. $action , ['user' => $this->name, 'code' => $device->code]);
 
-        event(new SMSCreated($phone, $text));
+//        event(new SMSCreated($phone, $text));
+
+        event(new SMSCreated($random_number , $phone));
+
     }
 
 }

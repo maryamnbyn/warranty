@@ -27,6 +27,6 @@ class SendUserSMS implements ShouldQueue
      */
     public function handle(SMSCreated $event)
     {
-        Smsirlaravel::send($event->text,$event->phone);
+        Smsirlaravel::sendVerification($event->random_number,$event->phone);
     }
 }

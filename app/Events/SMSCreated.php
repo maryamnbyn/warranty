@@ -15,17 +15,18 @@ class SMSCreated
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $phone;
-    public $text;
+    public $random_number;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($phone,$text)
+    public function __construct($random_number,$phone)
     {
+        $this->random_number = $random_number;
         $this->phone = $phone;
-        $this->text = $text;
+
     }
 
     /**
