@@ -22,8 +22,8 @@ class CreateDevicesTable extends Migration
         });
 
         Schema::create('user_device', function (Blueprint $table) {
-            $table->bigInteger('device_id')->unsigned()->nullable();
-            $table->bigInteger('user_id')->unsigned()->nullable();
+            $table->bigInteger('device_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
 
 
             $table->foreign('user_id')
