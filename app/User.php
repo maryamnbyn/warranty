@@ -5,8 +5,8 @@ namespace App;
 use App\Events\SMSCreated;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Ipecompany\Smsirlaravel\Smsirlaravel;
 use Laravel\Passport\HasApiTokens;
+
 class User extends Authenticatable
 {
     use Notifiable, HasApiTokens;
@@ -36,12 +36,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Product::class );
     }
-
-//    public function sendMessage()
-//    {
-//        event(new MessageCreated());
-//    }
-
 
     public function sendSMS($action ,$UUID = null, $digit = null)
     {

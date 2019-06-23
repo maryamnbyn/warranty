@@ -31,7 +31,7 @@
                     <p>{{$user->phone}}</p>
 
                     <p><a href="{{ route('admin.users.edit',['user' =>$user->id ])  }}">ویرایش کاربر</a></p>
-                    <p><a href="{{ route('admin.user.message',['user' =>$user->id ])  }}">ارسال پیام</a></p>
+                    {{--<p><a href="{{ route('admin.user.message',['user' =>$user->id ])  }}">ارسال پیام</a></p>--}}
                 </div>
             </div>
             <div class="col">

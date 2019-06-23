@@ -18,13 +18,13 @@ class AdminController extends Controller
 {
     public function sendMessage(User $user)
     {
-        return view('panel.admin.sendMessage',compact('user'));
+        return view('panel.admin.sendMessage', compact('user'));
     }
 
-    public function sendUserMessage(Request $request,User $user)
+    public function sendUserMessage(Request $request, User $user)
     {
 
-        event(new MessageCreated($request->message,$user->phone));
+        event(new MessageCreated($request->message, $user->phone));
 
         return back();
     }
@@ -101,6 +101,7 @@ class AdminController extends Controller
             'role' => 'admin',
             'password' => bcrypt($request->password),
         ]);
+
         return redirect()->back();
     }
 }
