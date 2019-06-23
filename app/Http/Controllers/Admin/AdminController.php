@@ -25,6 +25,7 @@ class AdminController extends Controller
     {
 
         event(new MessageCreated($request->message,$user->phone));
+
         return back();
     }
 
@@ -84,6 +85,7 @@ class AdminController extends Controller
     public function Profile()
     {
         $admins = Admin::all();
+
         return view('panel.admin.profile', compact('admins'));
     }
 
