@@ -10,23 +10,20 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class SMSCreated
+class MessageCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
     public $phone;
-    public $random_number;
-
+    public $message;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($random_number, $phone)
+    public function __construct($message,$phone)
     {
-        $this->random_number = $random_number;
-        $this->phone = $phone;
-
+        $this->phone =$phone;
+        $this->message =$message;
     }
 
     /**

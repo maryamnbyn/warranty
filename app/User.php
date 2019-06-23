@@ -37,6 +37,12 @@ class User extends Authenticatable
         return $this->hasMany(Product::class );
     }
 
+//    public function sendMessage()
+//    {
+//        event(new MessageCreated());
+//    }
+
+
     public function sendSMS($action ,$UUID = null, $digit = null)
     {
         if (is_null($digit)) $digit = config('verify.digit');

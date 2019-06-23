@@ -20,6 +20,8 @@ Route::group(['as'=>'admin.','namespace' => 'Admin' ,'prefix' => 'admin' ,'middl
     Route::get('/dashboard', 'AdminController@dashboard')->name('adminpannel');
     Route::get('user/{user}/profile', 'UserController@showProfile')->name('users.profile');
     Route::post('profile/update/{user}', 'AdminController@update')->name('profile.update');
+    Route::get('users/{user}/message', 'AdminController@sendMessage')->name('user.message');
+    Route::post('/send/{user}/message', 'AdminController@sendUserMessage')->name('send.message');
 });
 
 Route::get('/', 'Admin\AdminController@index')->name('index');

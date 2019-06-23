@@ -17,6 +17,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         'App\Events\SMSCreated' => [
             'App\Listeners\SendUserSMS'
+        ],
+        'App\Events\MessageCreated' => [
+            'App\Listeners\SendUserMessage'
         ]
     ];
 
