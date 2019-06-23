@@ -47,7 +47,7 @@ class CreateDevicesTable extends Migration
     {
         Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('devices');
-        Schema::dropIfExists('device_user');
+        Schema::dropIfExistsgit ('device_user');
 
     }
 }
