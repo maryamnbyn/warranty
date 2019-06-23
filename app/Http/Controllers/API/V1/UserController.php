@@ -176,7 +176,7 @@ class UserController extends Controller
 
         if ($device instanceof Device) {
 
-            $request->user()->token()->revoke();
+//            $request->user()->token()->revoke();
 
             $token = Auth::user()->createToken('MyApp')->accessToken;
 
