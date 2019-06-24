@@ -18,9 +18,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\SMSCreated' => [
             'App\Listeners\SendUserSMS'
         ],
-//        'App\Events\MessageCreated' => [
-//            'App\Listeners\SendUserMessage'
-//        ]
+        'App\Events\MessageCreated' => [
+            'App\Listeners\SendUserMessage'
+        ]
     ];
 
     /**
