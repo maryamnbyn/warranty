@@ -6,7 +6,7 @@ use App\Events\SMSCreated;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Ipecompany\Smsirlaravel\Smsirlaravel;
 
-class SendUserSMS implements ShouldQueue
+class SendUserSMS
 {
     public $tries = 5;
     /**
